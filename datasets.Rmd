@@ -31,3 +31,46 @@ total_costs <- total_costs[[1]] %>%
 total_costs
 ```
 
+```{r}
+# Here I read in data from one of the years for PrEP usage.
+
+prep_rates2012 <- read_xlsx("Data_Sets/PrEP_Data/AIDSVu_National_PrEP_2012.xlsx",
+  skip = 1) %>% 
+  clean_names()
+
+
+```
+```{r}
+prep_rates2013 <- read_xlsx("Data_Sets/PrEP_Data/AIDSVu_National_PrEP_2013.xlsx",
+                            skip = 1) %>% 
+  clean_names()
+
+```
+
+```{r}
+preprates <- rbind(prep_rates2012, prep_rates2013)
+
+```
+```{r}
+prep_data_1 <- data.frame()
+```
+
+list.files("Data_Sets/PrEP_Data")
+```{r}
+# Function to read in all the files in my folder
+
+list <- list.files("Data_Sets/PrEP_Data")
+
+listxlsx <- dir(pattern = "*.xlsx")
+for (i in 1:length(list)){
+  print(list[i])
+  temp_data <- read_xlsx(paste("Data_Sets/PrEP_Data/", list[i], sep = ""),
+                         skip = 1) %>% 
+    clean_names()
+  prep_data_1 = rbind(prep_data_1, temp_data)
+}
+
+prep_data_1
+
+```
+```
