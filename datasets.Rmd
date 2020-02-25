@@ -18,6 +18,8 @@ library(rvest)
 ```
 
 ```{r}
+# This includes the direct medical costs associated with key STIs in the U.S.. I will be looking at the costs of HIV, chlamydia, gonorrhea, and I think syphilis as well. The prices listed are in 2006 USD, so I should create another column that calculates the 2019 USD cost for each infection.
+
 sti_costs <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
 
 total_costs <- sti_costs %>% 
