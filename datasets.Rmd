@@ -1,0 +1,31 @@
+---
+title: "datasets"
+author: "John Morse"
+date: "2/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(janitor)
+library(tidyverse)
+library(gt)
+library(rvest)
+```
+
+```{r}
+sti_costs <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
+
+total_costs <- sti_costs %>% 
+  html_nodes("table")
+
+total_costs <- total_costs[[1]] %>% 
+  html_table
+
+total_costs
+```
+
