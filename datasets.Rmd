@@ -18,7 +18,7 @@ library(rvest)
 ```
 
 
-```{r}
+
 webpage <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
 tbls <- html_nodes(webpage, "table")
 head(tbls)
@@ -28,7 +28,7 @@ tbls_ls <- webpage %>%
         .[[1]] %>%
         html_table(fill = TRUE)
 tbls_ls
-```
+
 tbls_ls <- webpage %>%
         html_nodes("#Table1") %>%
         html_table(fill = TRUE)
@@ -45,59 +45,34 @@ head(tbls2_ls)
 ```
 
 ```{r}
-# empty table where I will put the information
-table_costs_ls <- list()
-
-table_costs_ls$Table1 <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/") %>% 
-  html_nodes("table") %>% 
-  html_table(fill =TRUE) %>% 
-  .[[1]] 
-
-table_costs_ls[[1]] <- table_costs_ls[[1]][-1,]
-
-colnames(table_costs_ls[[1]] <- c("Parameter","Females", "Males", "Range_Applied"))
-
-head(table_costs_ls[[1]], 5)
-
-```
-head(table_costs[[1]],)
-table_costs[[1]] <-table_costs[[1]][-1]
-colnames(table_costs[[1]] <- c("Parameter","Females", "Males", "Range_Applied"))
-
-table_costs
-
-
-
-```{r}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
 # will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
-# syphilis as well. The prices listed are in 2006 USD, so I should create
-# another column that calculates the 2019 USD cost for each infection.
+# syphilis as well. The prices listed are in 2006 USD, so I will create
+# another column that calculates the 2019 USD cost for each infection.I have used the pivot long function to create a new column relating to sex. The data should be clean and I have used the slice function to get rid of unwanted rows.
 
-table_costs <- list()
+table_costs_messy <- list()
 
-table_costs<- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")%>% 
+table_costs_messy <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")%>% 
   html_node("table") %>% 
   html_table(header = TRUE) %>% 
   clean_names() %>% 
   slice(-1) %>% 
   slice(1:17)
 
+table_costs_messy[table_costs_messy == "not applicable"] <-NA
 
-table_costs[table_costs == "not applicable"] <-NA
+colnames(table_costs_messy)[2:3] <- c("xF", "xM")
 
-colnames(table_costs)[2:3] <- c("xFemale", "xMale")
-
-Long <- table_costs %>%
+table_costs_clean <- table_costs_messy %>%
   pivot_longer(cols = starts_with("x"),
                names_to = "Sex",
                names_prefix = "x",
                values_to = "Cost",
-               
                values_drop_na = FALSE
-               )
-Long
+               ) 
+table_costs_clean
 ```
+
  
 tidy_wb_data1 <- wb_data %>%
   pivot_longer(cols = starts_with("x"),
@@ -113,34 +88,39 @@ tidy_wb_data1
 
 
 ```{r}
+# empty data set where I will store the files once they'e loaded in.
 prep_data_1 <- data.frame()
-```
 
-list.files("Data_Sets/PrEP_Data")
-```{r}
-# Function to read in all the files in my folder
-
+# Listing out all the files in this particular folder. All of this data relates to PrEP usage in the U.S..
 list <- list.files("Data_Sets/PrEP_Data")
+
+# Here I have the actual function which is picking up on every document that ends in ".xlsx" in the "PrEP_Data" folder. The function reads in all of the data, and then spits each one into the empty dataframe that I have created. Each row is appended onto the preceding year's data.
 
 listxlsx <- dir(pattern = "*.xlsx")
 for (i in 1:length(list)){
   print(list[i])
-  temp_data <- read_xlsx(paste("Data_Sets/PrEP_Data/", list[i], sep = ""),
+  temp_data <- read_xlsx(paste("Data_Sets/PrEP_Data/",
+                               list[i], sep = ""),
                          skip = 1) %>% 
     clean_names()
+  
   prep_data_1 = rbind(prep_data_1, temp_data)
 }
 
-prep_data_1
-
+prep_data_1 <- prep_data_1 %>% 
+  gt()
 ```
 
 ```{r}
 # Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+
 chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
-  clean_names()
+  clean_names() 
 chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
+
+chlamydia_gonorrhea <- chlamydia_gonorrhea %>% 
+  gt()
 
 chlamydia_gonorrhea
 
@@ -160,6 +140,7 @@ hiv_aids_f
 
 ```{r}
 # Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to 2017. I have added an extra column to list what the sex is.
+
 hiv_aids_m <- read_xlsx("Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx",
   skip = 8) %>% 
   clean_names() %>% 
@@ -171,9 +152,10 @@ hiv_aids_m
 ```
 
 ```{r}
-# Here I merged the two HIV/AIDS datasets as the variables were the same for each table.
+# Here I merged the two HIV/AIDS datasets as the variables were the same for both the female and male tables.
+
 hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
-  arrange(desc(year))
+  gt()
 
 hiv_aids_all
 ```
@@ -181,14 +163,20 @@ hiv_aids_all
 
 ```{r}
 # Here I read in all the CDC data for both early latent and congential syphilis rates from 2008 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+
 syphilis <- read_xlsx("Data_Sets/CDC_Data/Atlas_Congenital&EarlyLatentSyphilis.xlsx",
   skip = 7) %>% 
   clean_names()
 syphilis[syphilis == "Data not available"] <-NA
 
-syphilis
+syphilis <- syphilis %>% 
+  gt()
 
+syphilis
 ```
 
+With this project, I have aggregrated data from diverse sources including the CDC, Rollins School of Public Health with Gilead Sciences, and academic researchers. The ultimate goal of this project is to assess the cost benefit of a popular new medication called PrEP which is used to protect individuals who are at high risk of HIV transmission.
 
+In order to make such an assertion, it is neccessary that we track the incidences of specific sexually transmitted infections (STIs). From the data, it is clear that the rates of HIV have been decreasing in recent years, but this has been accompanied by an increase in the number of cases of other STIs. One possible reason for this, is the advent of PrEP. It is possible that this potential safeguard against HIV has led individuals to engage in other risky sexual behaviors that may begin to explain the increase in STI rates.
 
+Additionally, I have pulled in data regarding the estimated costs for all STIs which include the direct medical costs of HIV. With this information, we can see if the decreased numbers of HIV has saved the U.S. healthcare money, or if the extra resources devoted towards STI treatment has surpassed any potential savings. This type of analysis  will make it possible to consider if PrEP has been a financially effective treatment in the eyes of the U.S. health system.
