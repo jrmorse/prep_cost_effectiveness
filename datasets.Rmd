@@ -18,7 +18,10 @@ library(rvest)
 ```
 
 ```{r}
-# This includes the direct medical costs associated with key STIs in the U.S.. I will be looking at the costs of HIV, chlamydia, gonorrhea, and I think syphilis as well. The prices listed are in 2006 USD, so I should create another column that calculates the 2019 USD cost for each infection.
+# This includes the direct medical costs associated with key STIs in the U.S.. I
+# will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
+# syphilis as well. The prices listed are in 2006 USD, so I should create
+# another column that calculates the 2019 USD cost for each infection.
 
 sti_costs <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
 
@@ -31,26 +34,6 @@ total_costs <- total_costs[[1]] %>%
 total_costs
 ```
 
-```{r}
-# Here I read in data from one of the years for PrEP usage.
-
-prep_rates2012 <- read_xlsx("Data_Sets/PrEP_Data/AIDSVu_National_PrEP_2012.xlsx",
-  skip = 1) %>% 
-  clean_names()
-
-
-```
-```{r}
-prep_rates2013 <- read_xlsx("Data_Sets/PrEP_Data/AIDSVu_National_PrEP_2013.xlsx",
-                            skip = 1) %>% 
-  clean_names()
-
-```
-
-```{r}
-preprates <- rbind(prep_rates2012, prep_rates2013)
-
-```
 ```{r}
 prep_data_1 <- data.frame()
 ```
@@ -74,3 +57,14 @@ prep_data_1
 
 ```
 ```
+
+```{r}
+
+Chlamydia_Gonorrhea <- read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
+  skip = 5) %>% 
+  clean_names()
+
+Chlamydia_Gonorrhea
+
+```
+
