@@ -56,15 +56,58 @@ for (i in 1:length(list)){
 prep_data_1
 
 ```
+
+```{r}
+# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
+  skip = 5) %>% 
+  clean_names()
+chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
+
+chlamydia_gonorrhea
+
 ```
 
 ```{r}
+# Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to 2017. I have added an extra column to list what the sex is.
 
-Chlamydia_Gonorrhea <- read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
-  skip = 5) %>% 
-  clean_names()
+hiv_aids_f <- read_xlsx("Data_Sets/CDC_Data/Atlas_CDC_HIV:AIDS_Female.xlsx",
+  skip = 8) %>% 
+  clean_names() %>% 
+  mutate(sex = "F")
+hiv_aids_f[hiv_aids_f == "Data not available"] <-NA
 
-Chlamydia_Gonorrhea
+hiv_aids_f
+```
+
+```{r}
+# Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to 2017. I have added an extra column to list what the sex is.
+hiv_aids_m <- read_xlsx("Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx",
+  skip = 8) %>% 
+  clean_names() %>% 
+  mutate(sex = "M")
+hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
+
+hiv_aids_m
 
 ```
 
+```{r}
+# Here I merged the two HIV/AIDS datasets as the variables were the same for each table.
+hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
+  arrange(desc(year))
+
+hiv_aids_all
+```
+
+
+```{r}
+# Here I read in all the CDC data for both early latent and congential syphilis rates from 2008 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+syphilis <- read_xlsx("Data_Sets/CDC_Data/Atlas_Congenital&EarlyLatentSyphilis.xlsx",
+  skip = 7) %>% 
+  clean_names()
+syphilis[syphilis == "Data not available"] <-NA
+
+syphilis
+
+```
