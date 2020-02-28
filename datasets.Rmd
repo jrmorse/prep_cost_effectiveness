@@ -17,22 +17,100 @@ library(gt)
 library(rvest)
 ```
 
+
+```{r}
+webpage <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
+tbls <- html_nodes(webpage, "table")
+head(tbls)
+
+tbls_ls <- webpage %>%
+        html_nodes("table") %>%
+        .[[1]] %>%
+        html_table(fill = TRUE)
+tbls_ls
+```
+tbls_ls <- webpage %>%
+        html_nodes("#Table1") %>%
+        html_table(fill = TRUE)
+```
+tbls2_ls <- list()
+
+tbls2_ls$Table1 <- webpage %>%
+        html_nodes("#Table1") %>% 
+        html_table(fill = TRUE) %>% 
+
+head(tbls2_ls)
+
+
+```
+
+```{r}
+# empty table where I will put the information
+table_costs_ls <- list()
+
+table_costs_ls$Table1 <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/") %>% 
+  html_nodes("table") %>% 
+  html_table(fill =TRUE) %>% 
+  .[[1]] 
+
+table_costs_ls[[1]] <- table_costs_ls[[1]][-1,]
+
+colnames(table_costs_ls[[1]] <- c("Parameter","Females", "Males", "Range_Applied"))
+
+head(table_costs_ls[[1]], 5)
+
+```
+head(table_costs[[1]],)
+table_costs[[1]] <-table_costs[[1]][-1]
+colnames(table_costs[[1]] <- c("Parameter","Females", "Males", "Range_Applied"))
+
+table_costs
+
+
+
 ```{r}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
 # will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
 # syphilis as well. The prices listed are in 2006 USD, so I should create
 # another column that calculates the 2019 USD cost for each infection.
 
-sti_costs <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
+table_costs <- list()
 
-total_costs <- sti_costs %>% 
-  html_nodes("table")
+table_costs<- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")%>% 
+  html_node("table") %>% 
+  html_table(header = TRUE) %>% 
+  clean_names() %>% 
+  slice(-1) %>% 
+  slice(1:17)
 
-total_costs <- total_costs[[1]] %>% 
-  html_table
 
-total_costs
+table_costs[table_costs == "not applicable"] <-NA
+
+colnames(table_costs)[2:3] <- c("xFemale", "xMale")
+
+Long <- table_costs %>%
+  pivot_longer(cols = starts_with("x"),
+               names_to = "Sex",
+               names_prefix = "x",
+               values_to = "Cost",
+               
+               values_drop_na = FALSE
+               )
+Long
 ```
+ 
+tidy_wb_data1 <- wb_data %>%
+  pivot_longer(cols = starts_with("x"),
+               names_to = "Year",
+               names_prefix = "x",
+               names_ptypes = list(Year = integer()),
+               values_to = "CO2_emissions",
+               values_drop_na = TRUE) %>% 
+  select("country_name", "country_code", "Year", "CO2_emissions")
+  
+ 
+tidy_wb_data1
+
 
 ```{r}
 prep_data_1 <- data.frame()
@@ -111,3 +189,6 @@ syphilis[syphilis == "Data not available"] <-NA
 syphilis
 
 ```
+
+
+

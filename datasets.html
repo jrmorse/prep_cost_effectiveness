@@ -399,20 +399,21 @@ library(rvest)</code></pre>
 <pre><code>## The following object is masked from 'package:readr':
 ## 
 ##     guess_encoding</code></pre>
-<pre class="r"><code># This includes the direct medical costs associated with key STIs in the U.S.. I
-# will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
-# syphilis as well. The prices listed are in 2006 USD, so I should create
-# another column that calculates the 2019 USD cost for each infection.
-
-sti_costs &lt;- read_html(&quot;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/&quot;)
-
-total_costs &lt;- sti_costs %&gt;% 
-  html_nodes(&quot;table&quot;)
-
-total_costs &lt;- total_costs[[1]] %&gt;% 
-  html_table
-
-total_costs</code></pre>
+<pre class="r"><code>webpage &lt;- read_html(&quot;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/&quot;)
+tbls &lt;- html_nodes(webpage, &quot;table&quot;)
+head(tbls)</code></pre>
+<pre><code>## {xml_nodeset (6)}
+## [1] &lt;table frame=&quot;hsides&quot; rules=&quot;groups&quot; class=&quot;rendered small default_table&quot; ...
+## [2] &lt;table frame=&quot;hsides&quot; rules=&quot;groups&quot; class=&quot;rendered small default_table&quot; ...
+## [3] &lt;table frame=&quot;hsides&quot; rules=&quot;groups&quot; class=&quot;rendered small default_table&quot; ...
+## [4] &lt;table frame=&quot;hsides&quot; rules=&quot;groups&quot; class=&quot;rendered small default_table&quot; ...
+## [5] &lt;table frame=&quot;hsides&quot; rules=&quot;groups&quot; class=&quot;rendered small default_table&quot; ...
+## [6] &lt;table frame=&quot;hsides&quot; rules=&quot;groups&quot; class=&quot;rendered small default_table&quot; ...</code></pre>
+<pre class="r"><code>tbls_ls &lt;- webpage %&gt;%
+        html_nodes(&quot;table&quot;) %&gt;%
+        .[[1]] %&gt;%
+        html_table(fill = TRUE)
+tbls_ls</code></pre>
 <pre><code>##                                                                              X1
 ## 1                                                                     Parameter
 ## 2                                                          Direct medical costs
@@ -487,6 +488,76 @@ total_costs</code></pre>
 ## 34 not applicable           0.25    not varied
 ## 35        0.00045        0.00045         ± 90%
 ## 36          0.875          0.875         ± 10%</code></pre>
+<p>tbls_ls &lt;- webpage %&gt;% html_nodes(“#Table1”) %&gt;% html_table(fill = TRUE)</p>
+<pre><code>tbls2_ls &lt;- list()
+
+tbls2_ls$Table1 &lt;- webpage %&gt;%
+        html_nodes(&quot;#Table1&quot;) %&gt;% 
+        html_table(fill = TRUE) %&gt;% 
+
+head(tbls2_ls)
+
+</code></pre>
+<pre class="r"><code># empty table where I will put the information
+table_costs_ls &lt;- list()
+
+table_costs_ls$Table1 &lt;- read_html(&quot;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/&quot;) %&gt;% 
+  html_nodes(&quot;table&quot;) %&gt;% 
+  html_table(fill =TRUE) %&gt;% 
+  .[[1]] 
+
+table_costs_ls[[1]] &lt;- table_costs_ls[[1]][-1,]
+
+colnames(table_costs_ls[[1]] &lt;- c(&quot;Parameter&quot;,&quot;Females&quot;, &quot;Males&quot;, &quot;Range_Applied&quot;))</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>head(table_costs_ls[[1]], 5)</code></pre>
+<pre><code>## [1] &quot;Parameter&quot;     &quot;Females&quot;       &quot;Males&quot;         &quot;Range_Applied&quot;</code></pre>
+<p>head(table_costs[[1]],) table_costs[[1]] &lt;-table_costs[[1]][-1] colnames(table_costs[[1]] &lt;- c(“Parameter”,“Females”, “Males”, “Range_Applied”))</p>
+<p>table_costs</p>
+<pre class="r"><code># This includes the direct medical costs associated with key STIs in the U.S.. I
+# will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
+# syphilis as well. The prices listed are in 2006 USD, so I should create
+# another column that calculates the 2019 USD cost for each infection.
+
+table_costs &lt;- list()
+
+table_costs&lt;- read_html(&quot;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/&quot;)%&gt;% 
+  html_node(&quot;table&quot;) %&gt;% 
+  html_table(header = TRUE) %&gt;% 
+  clean_names() %&gt;% 
+  slice(-1) %&gt;% 
+  slice(1:17)
+
+
+table_costs[table_costs == &quot;not applicable&quot;] &lt;-NA
+
+colnames(table_costs)[2:3] &lt;- c(&quot;xFemale&quot;, &quot;xMale&quot;)
+
+Long &lt;- table_costs %&gt;%
+  pivot_longer(cols = starts_with(&quot;x&quot;),
+               names_to = &quot;Sex&quot;,
+               names_prefix = &quot;x&quot;,
+               values_to = &quot;Cost&quot;,
+               
+               values_drop_na = FALSE
+               )
+Long</code></pre>
+<pre><code>## # A tibble: 34 x 4
+##    parameter                                       range_applied Sex    Cost  
+##    &lt;chr&gt;                                           &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt; 
+##  1 Average cost per case of PID [23–25]            ± 50%         Female $1,995
+##  2 Average cost per case of PID [23–25]            ± 50%         Male   &lt;NA&gt;  
+##  3 Average cost per case of epididymitis [26]      ± 50%         Female &lt;NA&gt;  
+##  4 Average cost per case of epididymitis [26]      ± 50%         Male   $274  
+##  5 Average sequelae costs per case of syphilis [5] ± 50%         Female $572* 
+##  6 Average sequelae costs per case of syphilis [5] ± 50%         Male   $572* 
+##  7 Average cost per case of chlamydia [5]          ± 50%         Female $315  
+##  8 Average cost per case of chlamydia [5]          ± 50%         Male   $26   
+##  9 Average cost per case of gonorrhea [5]          ± 50%         Female $343  
+## 10 Average cost per case of gonorrhea [5]          ± 50%         Male   $68   
+## # … with 24 more rows</code></pre>
+<p>tidy_wb_data1 &lt;- wb_data %&gt;% pivot_longer(cols = starts_with(“x”), names_to = “Year”, names_prefix = “x”, names_ptypes = list(Year = integer()), values_to = “CO2_emissions”, values_drop_na = TRUE) %&gt;% select(“country_name”, “country_code”, “Year”, “CO2_emissions”)</p>
+<p>tidy_wb_data1</p>
 <pre class="r"><code>prep_data_1 &lt;- data.frame()</code></pre>
 <p>list.files(“Data_Sets/PrEP_Data”)</p>
 <pre class="r"><code># Function to read in all the files in my folder
