@@ -20,8 +20,10 @@ library(rvest)
 ```{r}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
 # will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
-# syphilis as well. The prices listed are in 2006 USD, so I will create
-# another column that calculates the 2019 USD cost for each infection.I have used the pivot long function to create a new column relating to sex. The data should be clean and I have used the slice function to get rid of unwanted rows.
+# syphilis as well. The prices listed are in 2006 USD, so I will create another
+# column that calculates the 2019 USD cost for each infection.I have used the
+# pivot long function to create a new column relating to sex. The data should be
+# clean and I have used the slice function to get rid of unwanted rows.
 
 table_costs_messy <- list()
 
@@ -47,13 +49,17 @@ table_costs_clean
 ```
 
 ```{r}
-# empty data set where I will store the files once they'e loaded in.
+# Empty data set where I will store the files once they'e loaded in.
 prep_data_1 <- data.frame()
 
-# Listing out all the files in this particular folder. All of this data relates to PrEP usage in the U.S..
+# Listing out all the files in this particular folder. All of this data relates
+# to PrEP usage in the U.S..
 list <- list.files("Data_Sets/PrEP_Data")
 
-# Here I have the actual function which is picking up on every document that ends in ".xlsx" in the "PrEP_Data" folder. The function reads in all of the data, and then spits each one into the empty dataframe that I have created. Each row is appended onto the preceding year's data.
+# Here I have the actual function which is picking up on every document that
+# ends in ".xlsx" in the "PrEP_Data" folder. The function reads in all of the
+# data, and then spits each one into the empty dataframe that I have created.
+# Each row is appended onto the preceding year's data.
 
 listxlsx <- dir(pattern = "*.xlsx")
 for (i in 1:length(list)){
@@ -71,7 +77,10 @@ prep_data_1 <- prep_data_1 %>%
 ```
 
 ```{r}
-# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. Also, for testing pursposes, I have set this to only return the first ten rows as it is a large dataset.
+# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to
+# 2017. I still should rename the columns so that it is clear which values are
+# for which variable when I join the datasets. Also, for testing pursposes, I
+# have set this to only return the first ten rows as it is a large dataset.
 
 chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
@@ -87,7 +96,8 @@ chlamydia_gonorrhea
 ```
 
 ```{r}
-# Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to 2017. I have added an extra column to list what the sex is.
+# Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to
+# 2017. I have added an extra column to list what the sex is.
 
 hiv_aids_f <- read_xlsx("Data_Sets/CDC_Data/Atlas_CDC_HIV:AIDS_Female.xlsx",
   skip = 8) %>% 
@@ -99,7 +109,8 @@ hiv_aids_f
 ```
 
 ```{r}
-# Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to 2017. I have added an extra column to list what the sex is.
+# Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to
+# 2017. I have added an extra column to list what the sex is.
 
 hiv_aids_m <- read_xlsx("Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx",
   skip = 8) %>% 
@@ -112,7 +123,9 @@ hiv_aids_m
 ```
 
 ```{r}
-# Here I merged the two HIV/AIDS datasets as the variables were the same for both the female and male tables. FOr testing purposes, I am only showing the first 10 rows.
+# Here I merged the two HIV/AIDS datasets as the variables were the same for
+# both the female and male tables. For testing purposes, I am only showing the
+# first 10 rows.
 
 hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
   slice(1:10) %>% 
@@ -123,7 +136,9 @@ hiv_aids_all
 
 
 ```{r}
-# Here I read in all the CDC data for both early latent and congential syphilis rates from 2008 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+# Here I read in all the CDC data for both early latent and congential syphilis
+# rates from 2008 to 2017. I still should rename the columns so that it is clear
+# which values are for which variable when I join the datasets.
 
 syphilis <- read_xlsx("Data_Sets/CDC_Data/Atlas_Congenital&EarlyLatentSyphilis.xlsx",
   skip = 7) %>% 
@@ -136,15 +151,33 @@ syphilis <- syphilis %>%
 syphilis
 ```
 
-About:
-With this project, I have aggregrated data from diverse sources including the CDC, Rollins School of Public Health with Gilead Sciences, and academic researchers. The ultimate goal of this project is to assess the cost benefit of a popular new medication called PrEP which is used to protect individuals who are at high risk of HIV transmission.
+About: With this project, I have aggregrated data from diverse sources including
+the CDC, Rollins School of Public Health with Gilead Sciences, and academic
+researchers. The ultimate goal of this project is to assess the cost benefit of
+a popular new medication called PrEP which is used to protect individuals who
+are at high risk of HIV transmission.
 
-In order to make such an assertion, it is neccessary that we track the incidences of specific sexually transmitted infections (STIs). From the data, it is clear that the rates of HIV have been decreasing in recent years, but this has been accompanied by an increase in the number of cases of other STIs. One possible reason for this, is the advent of PrEP. It is possible that this potential safeguard against HIV has led individuals to engage in other risky sexual behaviors that may begin to explain the increase in STI rates.
+In order to make such an assertion, it is neccessary that we track the
+incidences of specific sexually transmitted infections (STIs). From the data, it
+is clear that the rates of HIV have been decreasing in recent years, but this
+has been accompanied by an increase in the number of cases of other STIs. One
+possible reason for this, is the advent of PrEP. It is possible that this
+potential safeguard against HIV has led individuals to engage in other risky
+sexual behaviors that may begin to explain the increase in STI rates.
 
-Additionally, I have pulled in data regarding the estimated costs for all STIs which include the direct medical costs of HIV. With this information, we can see if the decreased numbers of HIV has saved the U.S. healthcare money, or if the extra resources devoted towards STI treatment has surpassed any potential savings. This type of analysis  will make it possible to consider if PrEP has been a financially effective treatment in the eyes of the U.S. health system.
+Additionally, I have pulled in data regarding the estimated costs for all STIs
+which include the direct medical costs of HIV. With this information, we can see
+if the decreased numbers of HIV has saved the U.S. healthcare money, or if the
+extra resources devoted towards STI treatment has surpassed any potential
+savings. This type of analysis  will make it possible to consider if PrEP has
+been a financially effective treatment in the eyes of the U.S. health system.
 
-Next steps:
-1. Creating a column in the table of estimated medical costs for STIs to convert the values of 2006USD to that of 2020 USD
-2. Rename columns in the tables so that it is obvious from which dataset they come from (relevant for step 3).
-3. Join all tables on the year variable.
-4. Remove columns that will not be used in the analysis.
+Next steps: 
+1. Creating a column in the table of estimated medical costs for
+STIs to convert the values of 2006USD to that of 2020 USD 
+2. Rename columns in
+the tables so that it is obvious from which dataset they come from (relevant for
+step 3). 
+3. Join all tables on the year variable. 
+4. Remove columns that will
+not be used in the analysis.

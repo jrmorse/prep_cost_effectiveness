@@ -401,8 +401,10 @@ library(rvest)</code></pre>
 ##     guess_encoding</code></pre>
 <pre class="r"><code># This includes the direct medical costs associated with key STIs in the U.S.. I
 # will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
-# syphilis as well. The prices listed are in 2006 USD, so I will create
-# another column that calculates the 2019 USD cost for each infection.I have used the pivot long function to create a new column relating to sex. The data should be clean and I have used the slice function to get rid of unwanted rows.
+# syphilis as well. The prices listed are in 2006 USD, so I will create another
+# column that calculates the 2019 USD cost for each infection.I have used the
+# pivot long function to create a new column relating to sex. The data should be
+# clean and I have used the slice function to get rid of unwanted rows.
 
 table_costs_messy &lt;- list()
 
@@ -439,13 +441,17 @@ table_costs_clean</code></pre>
 ##  9 Average cost per case of gonorrhea [5]          ± 50%         F     $343  
 ## 10 Average cost per case of gonorrhea [5]          ± 50%         M     $68   
 ## # … with 24 more rows</code></pre>
-<pre class="r"><code># empty data set where I will store the files once they'e loaded in.
+<pre class="r"><code># Empty data set where I will store the files once they'e loaded in.
 prep_data_1 &lt;- data.frame()
 
-# Listing out all the files in this particular folder. All of this data relates to PrEP usage in the U.S..
+# Listing out all the files in this particular folder. All of this data relates
+# to PrEP usage in the U.S..
 list &lt;- list.files(&quot;Data_Sets/PrEP_Data&quot;)
 
-# Here I have the actual function which is picking up on every document that ends in &quot;.xlsx&quot; in the &quot;PrEP_Data&quot; folder. The function reads in all of the data, and then spits each one into the empty dataframe that I have created. Each row is appended onto the preceding year's data.
+# Here I have the actual function which is picking up on every document that
+# ends in &quot;.xlsx&quot; in the &quot;PrEP_Data&quot; folder. The function reads in all of the
+# data, and then spits each one into the empty dataframe that I have created.
+# Each row is appended onto the preceding year's data.
 
 listxlsx &lt;- dir(pattern = &quot;*.xlsx&quot;)
 for (i in 1:length(list)){
@@ -466,7 +472,10 @@ for (i in 1:length(list)){
 ## [1] &quot;AIDSVu_National_PrEP_2018.xlsx&quot;</code></pre>
 <pre class="r"><code>prep_data_1 &lt;- prep_data_1 %&gt;% 
   gt()</code></pre>
-<pre class="r"><code># Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. Also, for testing pursposes, I have set this to only return the first ten rows as it is a large dataset.
+<pre class="r"><code># Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to
+# 2017. I still should rename the columns so that it is clear which values are
+# for which variable when I join the datasets. Also, for testing pursposes, I
+# have set this to only return the first ten rows as it is a large dataset.
 
 chlamydia_gonorrhea &lt;-read_xlsx(&quot;Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&amp;Gonorrhea.xlsx&quot;,
   skip = 5) %&gt;% 
@@ -482,7 +491,7 @@ chlamydia_gonorrhea</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#swzyypyvzn .gt_table {
+#sveqvcbwmw .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -510,7 +519,7 @@ chlamydia_gonorrhea</code></pre>
   /* table.border.bottom.color */
 }
 
-#swzyypyvzn .gt_heading {
+#sveqvcbwmw .gt_heading {
   background-color: #FFFFFF;
   /* heading.background.color */
   border-bottom-color: #FFFFFF;
@@ -529,7 +538,7 @@ chlamydia_gonorrhea</code></pre>
   /* heading.border.lr.color */
 }
 
-#swzyypyvzn .gt_title {
+#sveqvcbwmw .gt_title {
   color: #333333;
   font-size: 125%;
   /* heading.title.font.size */
@@ -543,7 +552,7 @@ chlamydia_gonorrhea</code></pre>
   border-bottom-width: 0;
 }
 
-#swzyypyvzn .gt_subtitle {
+#sveqvcbwmw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   /* heading.subtitle.font.size */
@@ -557,7 +566,7 @@ chlamydia_gonorrhea</code></pre>
   border-top-width: 0;
 }
 
-#swzyypyvzn .gt_bottom_border {
+#sveqvcbwmw .gt_bottom_border {
   border-bottom-style: solid;
   /* heading.border.bottom.style */
   border-bottom-width: 2px;
@@ -566,7 +575,7 @@ chlamydia_gonorrhea</code></pre>
   /* heading.border.bottom.color */
 }
 
-#swzyypyvzn .gt_column_spanner {
+#sveqvcbwmw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -574,7 +583,7 @@ chlamydia_gonorrhea</code></pre>
   padding-bottom: 4px;
 }
 
-#swzyypyvzn .gt_col_headings {
+#sveqvcbwmw .gt_col_headings {
   border-top-style: solid;
   /* column_labels.border.top.style */
   border-top-width: 2px;
@@ -601,7 +610,7 @@ chlamydia_gonorrhea</code></pre>
   /* column_labels.border.lr.color */
 }
 
-#swzyypyvzn .gt_col_heading {
+#sveqvcbwmw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   /* column_labels.background.color */
@@ -617,11 +626,11 @@ chlamydia_gonorrhea</code></pre>
   overflow-x: hidden;
 }
 
-#swzyypyvzn .gt_sep_right {
+#sveqvcbwmw .gt_sep_right {
   border-right: 5px solid #FFFFFF;
 }
 
-#swzyypyvzn .gt_group_heading {
+#sveqvcbwmw .gt_group_heading {
   padding: 8px;
   /* row_group.padding */
   color: #333333;
@@ -660,7 +669,7 @@ chlamydia_gonorrhea</code></pre>
   vertical-align: middle;
 }
 
-#swzyypyvzn .gt_empty_group_heading {
+#sveqvcbwmw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -684,20 +693,20 @@ chlamydia_gonorrhea</code></pre>
   vertical-align: middle;
 }
 
-#swzyypyvzn .gt_striped {
+#sveqvcbwmw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
   /* row.striping.background_color */
 }
 
-#swzyypyvzn .gt_from_md > :first-child {
+#sveqvcbwmw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#swzyypyvzn .gt_from_md > :last-child {
+#sveqvcbwmw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#swzyypyvzn .gt_row {
+#sveqvcbwmw .gt_row {
   padding-top: 8px;
   /* data_row.padding */
   padding-bottom: 8px;
@@ -727,7 +736,7 @@ chlamydia_gonorrhea</code></pre>
   overflow-x: hidden;
 }
 
-#swzyypyvzn .gt_stub {
+#sveqvcbwmw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   /* stub.background.color */
@@ -744,7 +753,7 @@ chlamydia_gonorrhea</code></pre>
   padding-left: 12px;
 }
 
-#swzyypyvzn .gt_summary_row {
+#sveqvcbwmw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   /* summary_row.background.color */
@@ -758,7 +767,7 @@ chlamydia_gonorrhea</code></pre>
   padding-right: 5px;
 }
 
-#swzyypyvzn .gt_first_summary_row {
+#sveqvcbwmw .gt_first_summary_row {
   padding-top: 8px;
   /* summary_row.padding */
   padding-bottom: 8px;
@@ -773,7 +782,7 @@ chlamydia_gonorrhea</code></pre>
   /* summary_row.border.color */
 }
 
-#swzyypyvzn .gt_grand_summary_row {
+#sveqvcbwmw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   /* grand_summary_row.background.color */
@@ -787,7 +796,7 @@ chlamydia_gonorrhea</code></pre>
   padding-right: 5px;
 }
 
-#swzyypyvzn .gt_first_grand_summary_row {
+#sveqvcbwmw .gt_first_grand_summary_row {
   padding-top: 8px;
   /* grand_summary_row.padding */
   padding-bottom: 8px;
@@ -802,7 +811,7 @@ chlamydia_gonorrhea</code></pre>
   /* grand_summary_row.border.color */
 }
 
-#swzyypyvzn .gt_table_body {
+#sveqvcbwmw .gt_table_body {
   border-top-style: solid;
   /* table_body.border.top.style */
   border-top-width: 2px;
@@ -817,7 +826,7 @@ chlamydia_gonorrhea</code></pre>
   /* table_body.border.bottom.color */
 }
 
-#swzyypyvzn .gt_footnotes {
+#sveqvcbwmw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   /* footnotes.background.color */
@@ -841,7 +850,7 @@ chlamydia_gonorrhea</code></pre>
   /* footnotes.border.lr.color */
 }
 
-#swzyypyvzn .gt_footnote {
+#sveqvcbwmw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   /* footnotes.font.size */
@@ -849,7 +858,7 @@ chlamydia_gonorrhea</code></pre>
   /* footnotes.padding */
 }
 
-#swzyypyvzn .gt_sourcenotes {
+#sveqvcbwmw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   /* source_notes.background.color */
@@ -873,48 +882,48 @@ chlamydia_gonorrhea</code></pre>
   /* source_notes.border.lr.style */
 }
 
-#swzyypyvzn .gt_sourcenote {
+#sveqvcbwmw .gt_sourcenote {
   font-size: 90%;
   /* source_notes.font.size */
   padding: 4px;
   /* source_notes.padding */
 }
 
-#swzyypyvzn .gt_left {
+#sveqvcbwmw .gt_left {
   text-align: left;
 }
 
-#swzyypyvzn .gt_center {
+#sveqvcbwmw .gt_center {
   text-align: center;
 }
 
-#swzyypyvzn .gt_right {
+#sveqvcbwmw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#swzyypyvzn .gt_font_normal {
+#sveqvcbwmw .gt_font_normal {
   font-weight: normal;
 }
 
-#swzyypyvzn .gt_font_bold {
+#sveqvcbwmw .gt_font_bold {
   font-weight: bold;
 }
 
-#swzyypyvzn .gt_font_italic {
+#sveqvcbwmw .gt_font_italic {
   font-style: italic;
 }
 
-#swzyypyvzn .gt_super {
+#sveqvcbwmw .gt_super {
   font-size: 65%;
 }
 
-#swzyypyvzn .gt_footnote_marks {
+#sveqvcbwmw .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="swzyypyvzn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="sveqvcbwmw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1022,7 +1031,8 @@ chlamydia_gonorrhea</code></pre>
   
   
 </table></div>
-<pre class="r"><code># Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to 2017. I have added an extra column to list what the sex is.
+<pre class="r"><code># Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to
+# 2017. I have added an extra column to list what the sex is.
 
 hiv_aids_f &lt;- read_xlsx(&quot;Data_Sets/CDC_Data/Atlas_CDC_HIV:AIDS_Female.xlsx&quot;,
   skip = 8) %&gt;% 
@@ -1045,7 +1055,8 @@ hiv_aids_f</code></pre>
 ##  9 HIV diagno…  2008 American Indian/Al… 35-44     Other                 0 F    
 ## 10 HIV diagno…  2008 American Indian/Al… 45-54     Heterosexual con…     3 F    
 ## # … with 2,090 more rows</code></pre>
-<pre class="r"><code># Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to 2017. I have added an extra column to list what the sex is.
+<pre class="r"><code># Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to
+# 2017. I have added an extra column to list what the sex is.
 
 hiv_aids_m &lt;- read_xlsx(&quot;Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx&quot;,
   skip = 8) %&gt;% 
@@ -1068,7 +1079,9 @@ hiv_aids_m</code></pre>
 ##  9 HIV diagn…  2008 American Indian… 25-34     Male-to-male sexual …     3 M    
 ## 10 HIV diagn…  2008 American Indian… 25-34     Other                     0 M    
 ## # … with 3,490 more rows</code></pre>
-<pre class="r"><code># Here I merged the two HIV/AIDS datasets as the variables were the same for both the female and male tables. FOr testing purposes, I am only showing the first 10 rows.
+<pre class="r"><code># Here I merged the two HIV/AIDS datasets as the variables were the same for
+# both the female and male tables. For testing purposes, I am only showing the
+# first 10 rows.
 
 hiv_aids_all &lt;- rbind(hiv_aids_f, hiv_aids_m) %&gt;%
   slice(1:10) %&gt;% 
@@ -1079,7 +1092,7 @@ hiv_aids_all</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#nkkvowcobe .gt_table {
+#sacuhpihyf .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1107,7 +1120,7 @@ hiv_aids_all</code></pre>
   /* table.border.bottom.color */
 }
 
-#nkkvowcobe .gt_heading {
+#sacuhpihyf .gt_heading {
   background-color: #FFFFFF;
   /* heading.background.color */
   border-bottom-color: #FFFFFF;
@@ -1126,7 +1139,7 @@ hiv_aids_all</code></pre>
   /* heading.border.lr.color */
 }
 
-#nkkvowcobe .gt_title {
+#sacuhpihyf .gt_title {
   color: #333333;
   font-size: 125%;
   /* heading.title.font.size */
@@ -1140,7 +1153,7 @@ hiv_aids_all</code></pre>
   border-bottom-width: 0;
 }
 
-#nkkvowcobe .gt_subtitle {
+#sacuhpihyf .gt_subtitle {
   color: #333333;
   font-size: 85%;
   /* heading.subtitle.font.size */
@@ -1154,7 +1167,7 @@ hiv_aids_all</code></pre>
   border-top-width: 0;
 }
 
-#nkkvowcobe .gt_bottom_border {
+#sacuhpihyf .gt_bottom_border {
   border-bottom-style: solid;
   /* heading.border.bottom.style */
   border-bottom-width: 2px;
@@ -1163,7 +1176,7 @@ hiv_aids_all</code></pre>
   /* heading.border.bottom.color */
 }
 
-#nkkvowcobe .gt_column_spanner {
+#sacuhpihyf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1171,7 +1184,7 @@ hiv_aids_all</code></pre>
   padding-bottom: 4px;
 }
 
-#nkkvowcobe .gt_col_headings {
+#sacuhpihyf .gt_col_headings {
   border-top-style: solid;
   /* column_labels.border.top.style */
   border-top-width: 2px;
@@ -1198,7 +1211,7 @@ hiv_aids_all</code></pre>
   /* column_labels.border.lr.color */
 }
 
-#nkkvowcobe .gt_col_heading {
+#sacuhpihyf .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   /* column_labels.background.color */
@@ -1214,11 +1227,11 @@ hiv_aids_all</code></pre>
   overflow-x: hidden;
 }
 
-#nkkvowcobe .gt_sep_right {
+#sacuhpihyf .gt_sep_right {
   border-right: 5px solid #FFFFFF;
 }
 
-#nkkvowcobe .gt_group_heading {
+#sacuhpihyf .gt_group_heading {
   padding: 8px;
   /* row_group.padding */
   color: #333333;
@@ -1257,7 +1270,7 @@ hiv_aids_all</code></pre>
   vertical-align: middle;
 }
 
-#nkkvowcobe .gt_empty_group_heading {
+#sacuhpihyf .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1281,20 +1294,20 @@ hiv_aids_all</code></pre>
   vertical-align: middle;
 }
 
-#nkkvowcobe .gt_striped {
+#sacuhpihyf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
   /* row.striping.background_color */
 }
 
-#nkkvowcobe .gt_from_md > :first-child {
+#sacuhpihyf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#nkkvowcobe .gt_from_md > :last-child {
+#sacuhpihyf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#nkkvowcobe .gt_row {
+#sacuhpihyf .gt_row {
   padding-top: 8px;
   /* data_row.padding */
   padding-bottom: 8px;
@@ -1324,7 +1337,7 @@ hiv_aids_all</code></pre>
   overflow-x: hidden;
 }
 
-#nkkvowcobe .gt_stub {
+#sacuhpihyf .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   /* stub.background.color */
@@ -1341,7 +1354,7 @@ hiv_aids_all</code></pre>
   padding-left: 12px;
 }
 
-#nkkvowcobe .gt_summary_row {
+#sacuhpihyf .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   /* summary_row.background.color */
@@ -1355,7 +1368,7 @@ hiv_aids_all</code></pre>
   padding-right: 5px;
 }
 
-#nkkvowcobe .gt_first_summary_row {
+#sacuhpihyf .gt_first_summary_row {
   padding-top: 8px;
   /* summary_row.padding */
   padding-bottom: 8px;
@@ -1370,7 +1383,7 @@ hiv_aids_all</code></pre>
   /* summary_row.border.color */
 }
 
-#nkkvowcobe .gt_grand_summary_row {
+#sacuhpihyf .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   /* grand_summary_row.background.color */
@@ -1384,7 +1397,7 @@ hiv_aids_all</code></pre>
   padding-right: 5px;
 }
 
-#nkkvowcobe .gt_first_grand_summary_row {
+#sacuhpihyf .gt_first_grand_summary_row {
   padding-top: 8px;
   /* grand_summary_row.padding */
   padding-bottom: 8px;
@@ -1399,7 +1412,7 @@ hiv_aids_all</code></pre>
   /* grand_summary_row.border.color */
 }
 
-#nkkvowcobe .gt_table_body {
+#sacuhpihyf .gt_table_body {
   border-top-style: solid;
   /* table_body.border.top.style */
   border-top-width: 2px;
@@ -1414,7 +1427,7 @@ hiv_aids_all</code></pre>
   /* table_body.border.bottom.color */
 }
 
-#nkkvowcobe .gt_footnotes {
+#sacuhpihyf .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   /* footnotes.background.color */
@@ -1438,7 +1451,7 @@ hiv_aids_all</code></pre>
   /* footnotes.border.lr.color */
 }
 
-#nkkvowcobe .gt_footnote {
+#sacuhpihyf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   /* footnotes.font.size */
@@ -1446,7 +1459,7 @@ hiv_aids_all</code></pre>
   /* footnotes.padding */
 }
 
-#nkkvowcobe .gt_sourcenotes {
+#sacuhpihyf .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   /* source_notes.background.color */
@@ -1470,48 +1483,48 @@ hiv_aids_all</code></pre>
   /* source_notes.border.lr.style */
 }
 
-#nkkvowcobe .gt_sourcenote {
+#sacuhpihyf .gt_sourcenote {
   font-size: 90%;
   /* source_notes.font.size */
   padding: 4px;
   /* source_notes.padding */
 }
 
-#nkkvowcobe .gt_left {
+#sacuhpihyf .gt_left {
   text-align: left;
 }
 
-#nkkvowcobe .gt_center {
+#sacuhpihyf .gt_center {
   text-align: center;
 }
 
-#nkkvowcobe .gt_right {
+#sacuhpihyf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#nkkvowcobe .gt_font_normal {
+#sacuhpihyf .gt_font_normal {
   font-weight: normal;
 }
 
-#nkkvowcobe .gt_font_bold {
+#sacuhpihyf .gt_font_bold {
   font-weight: bold;
 }
 
-#nkkvowcobe .gt_font_italic {
+#sacuhpihyf .gt_font_italic {
   font-style: italic;
 }
 
-#nkkvowcobe .gt_super {
+#sacuhpihyf .gt_super {
   font-size: 65%;
 }
 
-#nkkvowcobe .gt_footnote_marks {
+#sacuhpihyf .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="nkkvowcobe" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="sacuhpihyf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1619,7 +1632,9 @@ hiv_aids_all</code></pre>
   
   
 </table></div>
-<pre class="r"><code># Here I read in all the CDC data for both early latent and congential syphilis rates from 2008 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+<pre class="r"><code># Here I read in all the CDC data for both early latent and congential syphilis
+# rates from 2008 to 2017. I still should rename the columns so that it is clear
+# which values are for which variable when I join the datasets.
 
 syphilis &lt;- read_xlsx(&quot;Data_Sets/CDC_Data/Atlas_Congenital&amp;EarlyLatentSyphilis.xlsx&quot;,
   skip = 7) %&gt;% 
@@ -1634,7 +1649,7 @@ syphilis</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#tfsdetdmvz .gt_table {
+#rddyclpgxn .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1662,7 +1677,7 @@ syphilis</code></pre>
   /* table.border.bottom.color */
 }
 
-#tfsdetdmvz .gt_heading {
+#rddyclpgxn .gt_heading {
   background-color: #FFFFFF;
   /* heading.background.color */
   border-bottom-color: #FFFFFF;
@@ -1681,7 +1696,7 @@ syphilis</code></pre>
   /* heading.border.lr.color */
 }
 
-#tfsdetdmvz .gt_title {
+#rddyclpgxn .gt_title {
   color: #333333;
   font-size: 125%;
   /* heading.title.font.size */
@@ -1695,7 +1710,7 @@ syphilis</code></pre>
   border-bottom-width: 0;
 }
 
-#tfsdetdmvz .gt_subtitle {
+#rddyclpgxn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   /* heading.subtitle.font.size */
@@ -1709,7 +1724,7 @@ syphilis</code></pre>
   border-top-width: 0;
 }
 
-#tfsdetdmvz .gt_bottom_border {
+#rddyclpgxn .gt_bottom_border {
   border-bottom-style: solid;
   /* heading.border.bottom.style */
   border-bottom-width: 2px;
@@ -1718,7 +1733,7 @@ syphilis</code></pre>
   /* heading.border.bottom.color */
 }
 
-#tfsdetdmvz .gt_column_spanner {
+#rddyclpgxn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1726,7 +1741,7 @@ syphilis</code></pre>
   padding-bottom: 4px;
 }
 
-#tfsdetdmvz .gt_col_headings {
+#rddyclpgxn .gt_col_headings {
   border-top-style: solid;
   /* column_labels.border.top.style */
   border-top-width: 2px;
@@ -1753,7 +1768,7 @@ syphilis</code></pre>
   /* column_labels.border.lr.color */
 }
 
-#tfsdetdmvz .gt_col_heading {
+#rddyclpgxn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   /* column_labels.background.color */
@@ -1769,11 +1784,11 @@ syphilis</code></pre>
   overflow-x: hidden;
 }
 
-#tfsdetdmvz .gt_sep_right {
+#rddyclpgxn .gt_sep_right {
   border-right: 5px solid #FFFFFF;
 }
 
-#tfsdetdmvz .gt_group_heading {
+#rddyclpgxn .gt_group_heading {
   padding: 8px;
   /* row_group.padding */
   color: #333333;
@@ -1812,7 +1827,7 @@ syphilis</code></pre>
   vertical-align: middle;
 }
 
-#tfsdetdmvz .gt_empty_group_heading {
+#rddyclpgxn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1836,20 +1851,20 @@ syphilis</code></pre>
   vertical-align: middle;
 }
 
-#tfsdetdmvz .gt_striped {
+#rddyclpgxn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
   /* row.striping.background_color */
 }
 
-#tfsdetdmvz .gt_from_md > :first-child {
+#rddyclpgxn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#tfsdetdmvz .gt_from_md > :last-child {
+#rddyclpgxn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#tfsdetdmvz .gt_row {
+#rddyclpgxn .gt_row {
   padding-top: 8px;
   /* data_row.padding */
   padding-bottom: 8px;
@@ -1879,7 +1894,7 @@ syphilis</code></pre>
   overflow-x: hidden;
 }
 
-#tfsdetdmvz .gt_stub {
+#rddyclpgxn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   /* stub.background.color */
@@ -1896,7 +1911,7 @@ syphilis</code></pre>
   padding-left: 12px;
 }
 
-#tfsdetdmvz .gt_summary_row {
+#rddyclpgxn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   /* summary_row.background.color */
@@ -1910,7 +1925,7 @@ syphilis</code></pre>
   padding-right: 5px;
 }
 
-#tfsdetdmvz .gt_first_summary_row {
+#rddyclpgxn .gt_first_summary_row {
   padding-top: 8px;
   /* summary_row.padding */
   padding-bottom: 8px;
@@ -1925,7 +1940,7 @@ syphilis</code></pre>
   /* summary_row.border.color */
 }
 
-#tfsdetdmvz .gt_grand_summary_row {
+#rddyclpgxn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   /* grand_summary_row.background.color */
@@ -1939,7 +1954,7 @@ syphilis</code></pre>
   padding-right: 5px;
 }
 
-#tfsdetdmvz .gt_first_grand_summary_row {
+#rddyclpgxn .gt_first_grand_summary_row {
   padding-top: 8px;
   /* grand_summary_row.padding */
   padding-bottom: 8px;
@@ -1954,7 +1969,7 @@ syphilis</code></pre>
   /* grand_summary_row.border.color */
 }
 
-#tfsdetdmvz .gt_table_body {
+#rddyclpgxn .gt_table_body {
   border-top-style: solid;
   /* table_body.border.top.style */
   border-top-width: 2px;
@@ -1969,7 +1984,7 @@ syphilis</code></pre>
   /* table_body.border.bottom.color */
 }
 
-#tfsdetdmvz .gt_footnotes {
+#rddyclpgxn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   /* footnotes.background.color */
@@ -1993,7 +2008,7 @@ syphilis</code></pre>
   /* footnotes.border.lr.color */
 }
 
-#tfsdetdmvz .gt_footnote {
+#rddyclpgxn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   /* footnotes.font.size */
@@ -2001,7 +2016,7 @@ syphilis</code></pre>
   /* footnotes.padding */
 }
 
-#tfsdetdmvz .gt_sourcenotes {
+#rddyclpgxn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   /* source_notes.background.color */
@@ -2025,48 +2040,48 @@ syphilis</code></pre>
   /* source_notes.border.lr.style */
 }
 
-#tfsdetdmvz .gt_sourcenote {
+#rddyclpgxn .gt_sourcenote {
   font-size: 90%;
   /* source_notes.font.size */
   padding: 4px;
   /* source_notes.padding */
 }
 
-#tfsdetdmvz .gt_left {
+#rddyclpgxn .gt_left {
   text-align: left;
 }
 
-#tfsdetdmvz .gt_center {
+#rddyclpgxn .gt_center {
   text-align: center;
 }
 
-#tfsdetdmvz .gt_right {
+#rddyclpgxn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#tfsdetdmvz .gt_font_normal {
+#rddyclpgxn .gt_font_normal {
   font-weight: normal;
 }
 
-#tfsdetdmvz .gt_font_bold {
+#rddyclpgxn .gt_font_bold {
   font-weight: bold;
 }
 
-#tfsdetdmvz .gt_font_italic {
+#rddyclpgxn .gt_font_italic {
   font-style: italic;
 }
 
-#tfsdetdmvz .gt_super {
+#rddyclpgxn .gt_super {
   font-size: 65%;
 }
 
-#tfsdetdmvz .gt_footnote_marks {
+#rddyclpgxn .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="tfsdetdmvz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="rddyclpgxn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
