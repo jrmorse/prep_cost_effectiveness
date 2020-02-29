@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+Link to data: https://github.com/jrmorse/final_project_datasets/blob/master/datasets.Rmd
+
 
 About: 
 Since the HIV/AIDS epidemic first began in 1981, amazing, albeit slow, progress has been made in the treatment and management of the disease in the United States. Public Health campaigns combined with powerful pharmaceutical innovations have played a pivotal role in changing the perception of the diagnosis of HIV from a death sentence to that of a chronic condition. In 2012, the United States witnessed the approval of a new drug that was able to prevent the onset of HIV for at risk individuals. With, Pre-Exposure Prophylaxis (PrEP) medication, high risk individuals have been able to live without contracting HIV, thus saving millions of dollars each year for the U.S. healthcare system. Accompanying this progress, however, is a spike in the prevalence of many other sexually transmitted illnesses (STIs). With this increase in STI prevalence, financial resources must be directed towards treatment. In my study, I aim to link the advent of PrEP in the United States to this increased observation of STIs, before discerning the cost efficiency of PrEP and its’ impact on the United States’ healthcare system. 
