@@ -150,34 +150,3 @@ syphilis <- syphilis %>%
 
 syphilis
 ```
-
-About: With this project, I have aggregrated data from diverse sources including
-the CDC, Rollins School of Public Health with Gilead Sciences, and academic
-researchers. The ultimate goal of this project is to assess the cost benefit of
-a popular new medication called PrEP which is used to protect individuals who
-are at high risk of HIV transmission.
-
-In order to make such an assertion, it is neccessary that we track the
-incidences of specific sexually transmitted infections (STIs). From the data, it
-is clear that the rates of HIV have been decreasing in recent years, but this
-has been accompanied by an increase in the number of cases of other STIs. One
-possible reason for this, is the advent of PrEP. It is possible that this
-potential safeguard against HIV has led individuals to engage in other risky
-sexual behaviors that may begin to explain the increase in STI rates.
-
-Additionally, I have pulled in data regarding the estimated costs for all STIs
-which include the direct medical costs of HIV. With this information, we can see
-if the decreased numbers of HIV has saved the U.S. healthcare money, or if the
-extra resources devoted towards STI treatment has surpassed any potential
-savings. This type of analysis  will make it possible to consider if PrEP has
-been a financially effective treatment in the eyes of the U.S. health system.
-
-Next steps: 
-1. Creating a column in the table of estimated medical costs for
-STIs to convert the values of 2006USD to that of 2020 USD 
-2. Rename columns in
-the tables so that it is obvious from which dataset they come from (relevant for
-step 3). 
-3. Join all tables on the year variable. 
-4. Remove columns that will
-not be used in the analysis.
