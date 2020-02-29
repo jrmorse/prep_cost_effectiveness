@@ -17,33 +17,6 @@ library(gt)
 library(rvest)
 ```
 
-
-
-webpage <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")
-tbls <- html_nodes(webpage, "table")
-head(tbls)
-
-tbls_ls <- webpage %>%
-        html_nodes("table") %>%
-        .[[1]] %>%
-        html_table(fill = TRUE)
-tbls_ls
-
-tbls_ls <- webpage %>%
-        html_nodes("#Table1") %>%
-        html_table(fill = TRUE)
-```
-tbls2_ls <- list()
-
-tbls2_ls$Table1 <- webpage %>%
-        html_nodes("#Table1") %>% 
-        html_table(fill = TRUE) %>% 
-
-head(tbls2_ls)
-
-
-```
-
 ```{r}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
 # will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
@@ -73,20 +46,6 @@ table_costs_clean <- table_costs_messy %>%
 table_costs_clean
 ```
 
- 
-tidy_wb_data1 <- wb_data %>%
-  pivot_longer(cols = starts_with("x"),
-               names_to = "Year",
-               names_prefix = "x",
-               names_ptypes = list(Year = integer()),
-               values_to = "CO2_emissions",
-               values_drop_na = TRUE) %>% 
-  select("country_name", "country_code", "Year", "CO2_emissions")
-  
- 
-tidy_wb_data1
-
-
 ```{r}
 # empty data set where I will store the files once they'e loaded in.
 prep_data_1 <- data.frame()
@@ -112,7 +71,7 @@ prep_data_1 <- prep_data_1 %>%
 ```
 
 ```{r}
-# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. 
+# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to 2017. I still should rename the columns so that it is clear which values are for which variable when I join the datasets. Also, for testing pursposes, I have set this to only return the first ten rows as it is a large dataset.
 
 chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
@@ -120,7 +79,8 @@ chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhe
 chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
 
 chlamydia_gonorrhea <- chlamydia_gonorrhea %>% 
-  gt()
+  slice(1:10) %>% 
+  gt() 
 
 chlamydia_gonorrhea
 
@@ -152,9 +112,10 @@ hiv_aids_m
 ```
 
 ```{r}
-# Here I merged the two HIV/AIDS datasets as the variables were the same for both the female and male tables.
+# Here I merged the two HIV/AIDS datasets as the variables were the same for both the female and male tables. FOr testing purposes, I am only showing the first 10 rows.
 
-hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
+hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
+  slice(1:10) %>% 
   gt()
 
 hiv_aids_all
@@ -175,8 +136,15 @@ syphilis <- syphilis %>%
 syphilis
 ```
 
+About:
 With this project, I have aggregrated data from diverse sources including the CDC, Rollins School of Public Health with Gilead Sciences, and academic researchers. The ultimate goal of this project is to assess the cost benefit of a popular new medication called PrEP which is used to protect individuals who are at high risk of HIV transmission.
 
 In order to make such an assertion, it is neccessary that we track the incidences of specific sexually transmitted infections (STIs). From the data, it is clear that the rates of HIV have been decreasing in recent years, but this has been accompanied by an increase in the number of cases of other STIs. One possible reason for this, is the advent of PrEP. It is possible that this potential safeguard against HIV has led individuals to engage in other risky sexual behaviors that may begin to explain the increase in STI rates.
 
 Additionally, I have pulled in data regarding the estimated costs for all STIs which include the direct medical costs of HIV. With this information, we can see if the decreased numbers of HIV has saved the U.S. healthcare money, or if the extra resources devoted towards STI treatment has surpassed any potential savings. This type of analysis  will make it possible to consider if PrEP has been a financially effective treatment in the eyes of the U.S. health system.
+
+Next steps:
+1. Creating a column in the table of estimated medical costs for STIs to convert the values of 2006USD to that of 2020 USD
+2. Rename columns in the tables so that it is obvious from which dataset they come from (relevant for step 3).
+3. Join all tables on the year variable.
+4. Remove columns that will not be used in the analysis.
