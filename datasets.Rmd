@@ -15,6 +15,7 @@ library(janitor)
 library(tidyverse)
 library(gt)
 library(rvest)
+library(reprex)
 ```
 
 ```{r}
@@ -24,6 +25,11 @@ library(rvest)
 # column that calculates the 2019 USD cost for each infection.I have used the
 # pivot long function to create a new column relating to sex. The data should be
 # clean and I have used the slice function to get rid of unwanted rows.
+```
+
+
+```{r}
+# I am confused as to how to make the cost column numeric. Don't I need to get rid of special characters.
 
 table_costs_messy <- list()
 
@@ -33,19 +39,29 @@ table_costs_messy <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC242
   clean_names() %>% 
   slice(-1) %>% 
   slice(1:17)
+```
+
+```{r}
+# I've scraped a table and cleaned it, and have tried to remove special characters from two collumns so that I will be able to convert those values to integers later. This part of the code does not throw error messages.
 
 table_costs_messy[table_costs_messy == "not applicable"] <-NA
-
 colnames(table_costs_messy)[2:3] <- c("xF", "xM")
+gsub(x = table_costs_messy$xF, pattern = "\\$|\\*", "")
+gsub(x = table_costs_messy$xM, pattern = "\\$|\\*", "")
+
+# Now that I've removed the unwanted characters, I'd hope to be able to make a new table.This is where I get an error that I have not properly removed special characters.
 
 table_costs_clean <- table_costs_messy %>%
   pivot_longer(cols = starts_with("x"),
                names_to = "Sex",
                names_prefix = "x",
                values_to = "Cost",
+               values_ptypes = list(Cost = integer()),
                values_drop_na = FALSE
-               ) 
+               )
+
 table_costs_clean
+
 ```
 
 ```{r}
@@ -82,14 +98,15 @@ prep_data_1 <- prep_data_1 %>%
 # for which variable when I join the datasets. Also, for testing pursposes, I
 # have set this to only return the first ten rows as it is a large dataset.
 
+# year is not in numbe=[]
+
 chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
   clean_names() 
 chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
 
 chlamydia_gonorrhea <- chlamydia_gonorrhea %>% 
-  slice(1:10) %>% 
-  gt() 
+  slice(1:10) 
 
 chlamydia_gonorrhea
 
@@ -150,3 +167,8 @@ syphilis <- syphilis %>%
 
 syphilis
 ```
+
+```{r}
+# How should I combine the data? with a bind or with a join?
+```
+
