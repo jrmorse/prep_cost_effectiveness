@@ -19,17 +19,40 @@ library(reprex)
 library(fivethirtyeight)
 ```
 
-My work so far:
-My data comes from a variety of sources that includes the CDC, academic research, and a pharmaceutical company.
+My work so far: My data comes from a variety of sources that includes the CDC,
+academic research, and a pharmaceutical company.
 
-I have spent most of my time cleaning the data and ensuring that all of the disparate graphs and tables are in proper form so that I can run analysis. My work so far has looked like this:
-1. Gather data and store on my computer
-2. Create GitHub repo which can be found here: 
+I have spent most of my time cleaning the data and ensuring that all of the
+disparate graphs and tables are in proper form so that I can run analysis. My
+work so far has looked like this:
+
+
+1. Gather data and store on my computer 
+
+2. Create GitHub repo which can be found here:
+https://github.com/jrmorse/final_project_datasets
+
 3. Load data into my .rmd
-4. scrape data from a website into my RMD. Here I had to spend a lot time ensuring that the format was correct. This meant getting rid of the costs for diseases that I wasn’t interested in, converting characters to integers, and segmenting between direct and indirect medical costs.
-5.  I made a function to run through a folder in my repo and to automatically, pull, clean, and combine data referring to PrEP usage in the U.S.
-6. I made a quick bar graph to show the increase of usage between men and women between 2012-2018.
-7. Then I read in, cleaned, and reformatted all CDC data for HIV and other relevant STIs.
+
+
+4. scrape data from a website into my RMD. Here I had to spend a lot time
+ensuring that the format was correct. This meant getting rid of the costs for
+diseases that I wasn’t interested in, converting characters to integers, and
+segmenting between direct and indirect medical costs.
+
+
+5.  I made a function to run through a folder in my repo and to automatically,
+pull, clean, and combine data referring to PrEP usage in the U.S.
+
+
+6. I made a quick bar graph to show the increase of usage between men and women
+between 2012-2018.
+
+
+7. Then I read in, cleaned, and reformatted all CDC data for HIV and other
+relevant STIs.
+
+*Please see below for the tables I have created*
 
 ```{r}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
@@ -46,7 +69,10 @@ table_costs_messy <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC242
   slice(-1) %>% 
   slice(4:17)
 
-# This is where I have made sex a new column so that I can better compare costs of illness for men and women. Additionally I have created a column to adjust 2006 USD to that of 2020 USD. The rate of inflation between the years was 131%.
+# This is where I have made sex a new column so that I can better compare costs
+# of illness for men and women. Additionally I have created a column to adjust
+# 2006 USD to that of 2020 USD. The rate of inflation between the years was
+# 131%.
 
 costs_clean <- table_costs_messy %>% 
   rename(xF = value_applied, xM = x) %>% 
@@ -66,7 +92,10 @@ costs_clean <- table_costs_messy %>%
 
 costs_clean
 
-# This table does not differentiate between indirect and direct costs as the dataset has indirect costs listed as a separate that is embedded in the data. In the following r blocks I will separate out the indirectand direct costs so that I can be more specific.
+# This table does not differentiate between indirect and direct costs as the
+# dataset has indirect costs listed as a separate that is embedded in the data.
+# In the following r blocks I will separate out the indirectand direct costs so
+# that I can be more specific.
 ```
 ```{r}
 # DIRECT COSTS FOR HIV & STIS
