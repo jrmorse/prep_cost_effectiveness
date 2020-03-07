@@ -24,9 +24,7 @@ library(reprex)
 # syphilis as well. The prices listed are in 2006 USD, so I will create another
 # column that calculates the 2019 USD cost for each infection.I have used the
 # pivot long function to create a new column relating to sex. The data should be
-# clean and I have used the slice function to get rid of unwanted rows. I am
-# confused as to how to make the cost column numeric. Don't I need to get rid
-# of special characters.
+# clean and I have used the slice function to get rid of unwanted rows. 
 
 table_costs_messy <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/")%>% 
   html_node("table") %>% 
@@ -35,54 +33,78 @@ table_costs_messy <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC242
   slice(-1) %>% 
   slice(4:17)
 
-# I've scraped a table and cleaned it, and have tried to remove special
-# characters from two collumns so that I will be able to convert those values to
-# integers later. This part of the code does not throw error messages.
+# This is where I have made sex a new column so that I can better compare costs of illness for men and women. Additionally I have created a column to adjust 2006 USD to that of 2020 USD. The rate of inflation between the years was 131%.
 
 costs_clean <- table_costs_messy %>% 
   rename(xF = value_applied, xM = x) %>% 
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "Sex",
+    names_to = "sex",
     names_prefix = "x",
-    values_to = "Cost",
+    values_to = "cost",
     values_drop_na = FALSE
   ) %>% 
-  mutate(Cost_2006 = parse_number(Cost)) %>% 
-  mutate(Cost_2020 = (Cost_2006 * 1.31)) %>% 
-  
 # I did this line below to get rid of extra text in the parameter column.
-  
   mutate_all(~ gsub(x =., pattern = "\\*| \\[5]| \\[6]| \\[1,64,65]| \\[85]", "")) %>% 
-  select("parameter", "Sex", "Cost_2020")
+
+  mutate(cost_2006 = parse_number(cost)) %>% 
+  mutate(cost_2020 = (cost_2006 * 1.31)) %>% 
+  select("parameter", "sex", "cost_2020")
 
 costs_clean
 
+# This table does not differentiate between indirect and direct costs as the dataset has indirect costs listed as a separate that is embedded in the data. In the following r blocks I will separate out the indirectand direct costs so that I can be more specific.
 ```
 ```{r}
+# DIRECT COSTS FOR HIV & STIS
+
+# This is the data that is just focused on direct medical costs.
+
 direct_costs <-
   costs_clean %>% 
   slice(1:10)
+colnames(direct_costs)[3] <- "direct_cost_2020"
+
 direct_costs
 ```
 
+
 ```{r}
+# INDIRECT COSTS HIV & STIS
+
+# This is the data that is concerned with the indirect costs of HIV
+
 indirect_costs_hiv <- costs_clean %>% 
   slice(13:14)
-indirect_costs_hiv
-```
 
-```{r}
+# This is the indirect costs of other relevant STIs
+
 indirect_costs_sti <- costs_clean %>% 
-  slice(21:28)
-indirect_costs_sti
+  slice(21:28) 
+
+# Here I'll join these two tables together with a bind function.
+indirect_costs = rbind(indirect_costs_hiv, indirect_costs_sti)
+
+# change the title of the cost column to be more specific
+colnames(indirect_costs)[3] <- "indirect_cost_2020"
+
+indirect_costs
+
 ```
 ```{r}
-# I now need to do a join of indirect costs sti and hiv with direct costs. 
+# INDIRECT & DIRECT COSTS
+
+complete_costs <- direct_costs %>% 
+  full_join(indirect_costs, direct_costs, by = c("parameter"= "parameter","sex"="sex")) %>% 
+  mutate(total_cost = direct_cost_2020 + indirect_cost_2020)
+
+complete_costs
 ```
 
 
 ```{r}
+# PREP DATA
+
 # Empty data set where I will store the files once they'e loaded in.
 prep_data_1 <- data.frame()
 
@@ -106,31 +128,55 @@ for (i in 1:length(list)){
   prep_data_1 = rbind(prep_data_1, temp_data)
 }
 
-prep_data_1 <- prep_data_1 %>% 
-  gt()
+prep_data_1
+
+```
+```{r}
+# PrEP growth rates for men and women
+
+# data for only male users
+prep_m <- prep_data_1 %>% 
+  select(year, male_pr_ep_users, male_pr_ep_rate) %>%
+  mutate(sex = "M")
+colnames(prep_m)[2:3] <- c("pr_ep_users", "pr_ep_rate")
+prep_m
+
+# data for only female users
+prep_f <- prep_data_1 %>% 
+  select(year, female_pr_ep_users, female_pr_ep_rate) %>% 
+  mutate(sex = "F")
+colnames(prep_f)[2:3] <- c("pr_ep_users", "pr_ep_rate")
+prep_f
+
+# Here I'll use the bind function to list the information ontop of eachother,
+prep_gender = rbind(prep_m, prep_f)
+prep_gender
+
+ggplot(data = prep_data_1, aes(x = year, y = female_pr_ep_users)) +
+  geom_col()
 ```
 
 ```{r}
+# CHLAMYDIA AND GONORRHEA ONLY
 # Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to
 # 2017. I still should rename the columns so that it is clear which values are
 # for which variable when I join the datasets. Also, for testing pursposes, I
 # have set this to only return the first ten rows as it is a large dataset.
 
-# year is not in numbe=[]
 
 chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
   clean_names() 
 chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
 
-chlamydia_gonorrhea <- chlamydia_gonorrhea %>% 
-  slice(1:10) 
-
+chlamydia_gonorrhea <- chlamydia_gonorrhea %>%
+  filter(!is.na(cases))
 chlamydia_gonorrhea
 
 ```
 
 ```{r}
+# HIV ONLY
 # Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to
 # 2017. I have added an extra column to list what the sex is.
 
@@ -140,10 +186,6 @@ hiv_aids_f <- read_xlsx("Data_Sets/CDC_Data/Atlas_CDC_HIV:AIDS_Female.xlsx",
   mutate(sex = "F")
 hiv_aids_f[hiv_aids_f == "Data not available"] <-NA
 
-hiv_aids_f
-```
-
-```{r}
 # Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to
 # 2017. I have added an extra column to list what the sex is.
 
@@ -153,11 +195,6 @@ hiv_aids_m <- read_xlsx("Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx",
   mutate(sex = "M")
 hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
 
-hiv_aids_m
-
-```
-
-```{r}
 # Here I merged the two HIV/AIDS datasets as the variables were the same for
 # both the female and male tables. For testing purposes, I am only showing the
 # first 10 rows.
@@ -171,6 +208,7 @@ hiv_aids_all
 
 
 ```{r}
+# SYPHILIS ONLY
 # Here I read in all the CDC data for both early latent and congential syphilis
 # rates from 2008 to 2017. I still should rename the columns so that it is clear
 # which values are for which variable when I join the datasets.
@@ -187,6 +225,6 @@ syphilis
 ```
 
 ```{r}
-# How should I combine the data? with a bind or with a join?
+
 ```
 
