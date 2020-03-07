@@ -16,6 +16,7 @@ library(tidyverse)
 library(gt)
 library(rvest)
 library(reprex)
+library(fivethirtyeight)
 ```
 
 ```{r}
@@ -137,23 +138,30 @@ prep_data_1
 # data for only male users
 prep_m <- prep_data_1 %>% 
   select(year, male_pr_ep_users, male_pr_ep_rate) %>%
-  mutate(sex = "M")
+  mutate(sex = "Male")
 colnames(prep_m)[2:3] <- c("pr_ep_users", "pr_ep_rate")
 prep_m
 
 # data for only female users
 prep_f <- prep_data_1 %>% 
   select(year, female_pr_ep_users, female_pr_ep_rate) %>% 
-  mutate(sex = "F")
+  mutate(sex = "Female")
 colnames(prep_f)[2:3] <- c("pr_ep_users", "pr_ep_rate")
 prep_f
 
 # Here I'll use the bind function to list the information ontop of eachother,
-prep_gender = rbind(prep_m, prep_f)
+prep_gender = rbind(prep_f, prep_m)
 prep_gender
 
-ggplot(data = prep_data_1, aes(x = year, y = female_pr_ep_users)) +
-  geom_col()
+ggplot(data = prep_gender, aes(x = year, y = pr_ep_users, fill = sex)) +
+  geom_col(position = "dodge") +
+  labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
+  theme_classic() +
+  scale_x_continuous(
+  breaks = seq(2012,2018,1),
+  label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
+  scale_y_continuous()
+
 ```
 
 ```{r}
