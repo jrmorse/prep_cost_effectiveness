@@ -224,8 +224,7 @@ chlamydia_gonorrhea
 
 ```
 
-```{r}
-# HIV ONLY
+```{r HIV DIAGNOSIS ONLY}
 # Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to
 # 2017. I have added an extra column to list what the sex is.
 
@@ -248,13 +247,28 @@ hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
 # both the female and male tables. For testing purposes, I am only showing the
 # first 10 rows.
 
-hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
+hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
+  filter(indicator == "HIV diagnoses")
+
+hiv_aids_all_test <- hiv_aids_all %>%
   slice(1:10) %>% 
   gt()
 
-hiv_aids_all
+hiv_aids_all_test
 ```
 
+```{r HIV_all graph}
+hiv_aids_year <- hiv_aids_all %>% 
+  group_by(year) %>%
+  summarize(total_cases = sum(cases))
+  
+ ggplot(hiv_aids_all, aes(x = year, y = cases, fill = "sex")) +
+   geom_col(position = "dodge")
+
+hiv_aids_year
+
+
+```
 
 ```{r}
 # SYPHILIS ONLY
