@@ -247,6 +247,8 @@ hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
 # both the female and male tables. For testing purposes, I am only showing the
 # first 10 rows.
 
+# I filtered for indicator of HIV diagnoses because if I do not, it lumps prevelance and diagnoses together in a way that is misleading for the information I want to communicate.
+
 hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
   filter(indicator == "HIV diagnoses")
 
@@ -257,17 +259,80 @@ hiv_aids_all_test <- hiv_aids_all %>%
 hiv_aids_all_test
 ```
 
-```{r HIV_all graph}
+```{r HIV Cases by year Graph}
 hiv_aids_year <- hiv_aids_all %>% 
   group_by(year) %>%
   summarize(total_cases = sum(cases))
-  
- ggplot(hiv_aids_all, aes(x = year, y = cases, fill = "sex")) +
-   geom_col(position = "dodge")
 
-hiv_aids_year
+ ggplot(hiv_aids_year, aes(x = year, y = total_cases)) +
+   geom_point() +
+   geom_text(aes(x = year, y = total_cases, label = total_cases),vjust = -1, nudge_y = .5) +
+   labs(title="HIV Diagnoses by Year", subtitle = "2007-2017") +
+   theme_classic() +
+   scale_x_continuous(
+     name = "Year",
+     breaks = seq(2007,2017,1),
+     label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
+   scale_y_continuous(
+     name = "New Diagnoses",
+     limits=c(35000, 50000))
 
+```
 
+```{r HIV Diagnoses by Gender Graph}
+
+ggplot(data = hiv_aids_all, aes(x = year, y = cases, fill = sex)) +
+  geom_col(position = "dodge") +
+  labs(title="HIV Diagnoses by Gender", subtitle = "2007-2017") +
+  theme_classic() +
+  scale_x_continuous(
+    name = "Year",
+    breaks = seq(2007,2017,1),
+    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
+  scale_y_continuous(
+    name = "New Diagnoses"
+  )
+```
+
+```{r HIV Diagnoses Transmission Category Tibble}
+hiv_aids_transmission <- hiv_aids_all %>% 
+  group_by(transmission_category, year, sex) %>%
+  summarize(total_cases = sum(cases))
+hiv_aids_transmission
+```
+
+```{r HIV Diagnosis by Category Graph}
+ggplot(data = hiv_aids_transmission, aes(x = year, y = total_cases, fill = transmission_category)) +
+  geom_col(position = "dodge") +
+  labs(title="HIV Diagnosis by Category", subtitle = "2007-2017") +
+  theme_classic() +
+  scale_x_continuous(
+    name = "Year",
+    breaks = seq(2007,2017,1),
+    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
+  scale_y_continuous(
+    name = "New Diagnoses"
+  )
+```
+
+```{r Male to male sexual contact}
+hiv_aids_maletomalesexualcontact <- hiv_aids_all %>% 
+  filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity == c("Black/African American", "White", "Hispanic/Latino")) %>%
+  group_by(year, race_ethnicity) %>%
+  summarize(total_cases = sum(cases))
+hiv_aids_maletomalesexualcontact
+
+ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases, fill = race_ethnicity)) +
+  geom_col(position = "dodge") +
+  labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
+  theme_classic() +
+  scale_x_continuous(
+    name = "Year",
+    breaks = seq(2007,2017,1),
+    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
+  scale_y_continuous(
+    name = "New Diagnoses"
+  )
 ```
 
 ```{r}
