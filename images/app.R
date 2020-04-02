@@ -16,19 +16,18 @@ if (interactive()) {
         sliderInput("n", "Select Graph", 1, 5, 1),
         plotOutput("plot3")
     )
-
-server <- function(input, output, session) {
-    output$plot3 <- renderImage({
-        
-        filename <- normalizePath(file.path('./images',
-                                            paste('image', input$n, '.jpeg', sep='')))
-        
-        # Return a list containing the filename
-        list(src = filename,
-             width = 700,
-             height = 500)
-    }, deleteFile = FALSE)
-}
-
-shinyApp(ui, server)
+    
+    server <- function(input, output, session) {
+        output$plot3 <- renderImage({
+            # When input$n is 1, filename is ./images/image1.jpeg
+            filename <- normalizePath(file.path('./images',
+                                                paste('image', input$n, '.jpeg', sep='')))
+            
+            # Return a list containing the filename
+            list(src = filename,
+                 width = 700,
+                 height = 500)
+        }, deleteFile = FALSE)
+    }
+    shinyApp(ui, server)
 }
