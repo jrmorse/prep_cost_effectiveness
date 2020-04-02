@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/586989/f4a2b6e6d0904fd09b139864dbb722e4
+bundleId: https://api.rpubs.com/api/v1/document/586989/f4a2b6e6d0904fd09b139864dbb722e4
+url: http://rpubs.com/jmorse94/586989
+when: 1584812185.5452

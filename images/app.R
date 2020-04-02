@@ -9,32 +9,41 @@
 
 library(shiny)
 
-# Define UI for application that will show my plot that I created in 1G
-if (interactive()) {
-    
+# Define UI for application that draws a histogram
 ui <- fluidPage(
-   
-        sliderInput("n", "Number of observations",1, 10,5),
-        imageOutput("image1"),
-        imageOutput("image2"),
-        imageOutput("image3")
+
+    # Application title
+    titlePanel("Old Faithful Geyser Data"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("bins",
+                        "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+           plotOutput("distPlot")
+        )
     )
+)
 
+# Define server logic required to draw a histogram
+server <- function(input, output) {
 
-# Create a function where the output calls the actual plot I created. Then go
-# ahead and add specifications for sizing.
-server <- function(input, output, session) {
-    output$plot3 <- renderImage({
-        # When input$n is 1, filename is ./images/image1.jpeg
-        filename <- normalizePath(file.path('./shiny_graphs',
-                                            paste('image', input$n, '.jpeg', sep='')))
-        
-        # Return a list containing the filename
-        list(src = filename)
-    }, deleteFile = FALSE)
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    })
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-}
-
