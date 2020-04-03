@@ -77,7 +77,7 @@ ggplot(data = prep_gender, aes(x = year, y = pr_ep_users, fill = sex)) +
     name = "PrEP Users"
   )
 ggsave("image1.jpeg",
-       path = "images")
+       path = "shiny")
 ```
 
 ```{r HIV DIAGNOSIS ONLY, include = FALSE}
@@ -135,7 +135,7 @@ hiv_aids_year <- hiv_aids_all %>%
      limits=c(35000, 50000))
 
  ggsave("image2.jpeg",
-       path = "images")
+       path = "shiny")
 ```
 
 ```{r HIV Diagnoses by Gender Graph}
@@ -153,7 +153,7 @@ ggplot(data = hiv_aids_all, aes(x = year, y = cases, fill = sex)) +
   )
 
 ggsave("image3.jpeg",
-       path = "images")
+       path = "shiny")
 ```
 
 ```{r HIV Diagnoses Transmission Category Tibble, include = FALSE}
@@ -177,7 +177,7 @@ ggplot(data = hiv_aids_transmission, aes(x = year, y = total_cases, fill = trans
   )
 
 ggsave("image4.jpeg",
-       path = "images")
+       path = "shiny")
 ```
 
 
@@ -196,6 +196,6 @@ ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases, f
   )
 
 ggsave("image5.jpeg",
-       path = "images")
+       path = "shiny")
 ```
 
