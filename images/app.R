@@ -9,25 +9,26 @@
 
 library(shiny)
 
-if (interactive()) {
-    options(device.ask.default = FALSE)
+ui <- fluidPage(
     
-    ui <- fluidPage(
-        sliderInput("n", "Select Graph", 1, 5, 1),
-        plotOutput("plot3")
+    # Show a plot of the generated distribution
+    mainPanel(
+        plotOutput("Graph")
     )
-    
-    server <- function(input, output, session) {
-        output$plot3 <- renderImage({
-            # When input$n is 1, filename is ./images/image1.jpeg
-            filename <- normalizePath(file.path('./images',
-                                                paste('image', input$n, '.jpeg', sep='')))
-            
-            # Return a list containing the filename
-            list(src = filename,
-                 width = 700,
-                 height = 500)
-        }, deleteFile = FALSE)
-    }
-    shinyApp(ui, server)
+)
+
+# Create a function where the output calls the actual plot I created. Then go
+# ahead and add specifications for sizing.
+server <- function(input, output) {
+    output$Graph <- renderImage({
+        list(src = "image1.jpeg",
+             contentType = 'jpeg',
+             width = 950,
+             height = 600)
+    }, deleteFile = FALSE)
 }
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+

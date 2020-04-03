@@ -5,9 +5,8 @@ account: john-morse
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2047497
-bundleId: 2962064
+bundleId: 2964535
 url: https://john-morse.shinyapps.io/shiny/
-when: 1585874158.47674
+when: 1585924133.01851
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: image1.jpeg|image2.jpeg|image3.jpeg|image4.jpeg|image5.jpeg

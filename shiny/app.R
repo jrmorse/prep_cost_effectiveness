@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(reprex)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -20,8 +21,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
     output$plot <- renderImage({
         # When input$n is 1, filename is ./shiny/image1.jpeg
-        filename <- normalizePath(file.path('./shiny',
-                                            paste('image', input$n, '.jpeg', sep='')))
+        filename <- normalizePath(file.path(paste('image', input$n, '.jpeg', sep='')))
         
         # Return a list containing the filename
         list(src = filename,
@@ -29,5 +29,6 @@ server <- function(input, output, session) {
              height = 500)
     }, deleteFile = FALSE)
 }
+
 shinyApp(ui, server)
 
