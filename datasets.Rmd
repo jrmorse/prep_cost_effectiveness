@@ -54,7 +54,7 @@ relevant STIs.
 
 *Please see below for the tables I have created*
 
-```{r}
+```{r all costs}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
 # will be looking at the costs of HIV, chlamydia, gonorrhea, and I think
 # syphilis as well. The prices listed are in 2006 USD, so I will create another
@@ -97,8 +97,7 @@ costs_clean
 # In the following r blocks I will separate out the indirectand direct costs so
 # that I can be more specific.
 ```
-```{r}
-# DIRECT COSTS FOR HIV & STIS
+```{r DIRECT COSTS FOR HIV & STIS}
 
 # This is the data that is just focused on direct medical costs.
 
@@ -111,8 +110,7 @@ direct_costs
 ```
 
 
-```{r}
-# INDIRECT COSTS HIV & STIS
+```{r INDIRECT COSTS HIV & STIS}
 
 # This is the data that is concerned with the indirect costs of HIV
 
@@ -133,8 +131,7 @@ colnames(indirect_costs)[3] <- "indirect_cost_2020"
 indirect_costs
 
 ```
-```{r}
-# INDIRECT & DIRECT COSTS
+```{r INDIRECT & DIRECT COSTS}
 
 complete_costs <- direct_costs %>% 
   full_join(indirect_costs, direct_costs, by = c("parameter"= "parameter","sex"="sex")) %>% 
@@ -144,9 +141,7 @@ complete_costs
 ```
 
 
-```{r, include = FALSE}
-# PREP DATA
-
+```{r, PREP DATA_National include = FALSE}
 # Empty data set where I will store the files once they'e loaded in.
 prep_data_1 <- data.frame()
 
@@ -173,28 +168,28 @@ for (i in 1:length(list)){
 prep_data_1
 
 ```
-```{r}
-# PrEP growth rates for men and women
+
+```{r PrEP growth rates for men and women_national}
 
 # data for only male users
-prep_m <- prep_data_1 %>% 
+prep_m_national <- prep_data_1 %>% 
   select(year, male_pr_ep_users, male_pr_ep_rate) %>%
   mutate(sex = "Male")
 colnames(prep_m)[2:3] <- c("pr_ep_users", "pr_ep_rate")
-prep_m
+prep_m_national
 
 # data for only female users
-prep_f <- prep_data_1 %>% 
+prep_f_national <- prep_data_1 %>% 
   select(year, female_pr_ep_users, female_pr_ep_rate) %>% 
   mutate(sex = "Female")
 colnames(prep_f)[2:3] <- c("pr_ep_users", "pr_ep_rate")
-prep_f
+prep_f_national
 
 # Here I'll use the bind function to list the information ontop of eachother,
-prep_gender = rbind(prep_f, prep_m)
-prep_gender
+prep_gender_national = rbind(prep_f, prep_m)
+prep_gender_national
 
-ggplot(data = prep_gender, aes(x = year, y = pr_ep_users, fill = sex)) +
+ggplot(data = prep_gender_national, aes(x = year, y = pr_ep_users, fill = sex)) +
   geom_col(position = "dodge") +
   labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
   theme_classic() +
@@ -204,6 +199,65 @@ ggplot(data = prep_gender, aes(x = year, y = pr_ep_users, fill = sex)) +
   scale_y_continuous()
 
 ```
+
+```{r Prep data state}
+prep_data_state <- data.frame()
+
+# Listing out all the files in this particular folder. All of this data relates
+# to PrEP usage in the U.S. on a state level.
+list <- list.files("Data_Sets/prep_data_state")
+
+# Here I have the actual function which is picking up on every document that
+# ends in ".xlsx" in the "prep_data_state" folder. The function reads in all of the
+# data, and then spits each one into the empty dataframe that I have created.
+# Each row is appended onto the preceding year's data.
+
+listxlsx <- dir(pattern = "*.xlsx")
+for (i in 1:length(list)){
+  print(list[i])
+  temp_data <- read_xlsx(paste("Data_Sets/prep_data_state/",
+                               list[i], sep = ""),
+                         skip = 1) %>% 
+    clean_names()
+  
+  prep_data_state = rbind(prep_data_state, temp_data)
+}
+
+prep_data_state
+
+```
+
+```{r PrEP growth rates for men and women_state}
+# data for only male users
+prep_m_state <- prep_data_state %>% 
+  select(year, male_pr_ep_users, state_abbreviation, state) %>%
+  mutate(sex = "Male")
+colnames(prep_m_state)[2] <- c("pr_ep_users")
+prep_m_state
+
+# data for only female users
+prep_f_state <- prep_data_state %>% 
+  select(year, female_pr_ep_users, state_abbreviation, state) %>% 
+  mutate(sex = "Female")
+colnames(prep_f_state)[2] <- c("pr_ep_users")
+prep_f_state
+
+# Here I'll use the bind function to list the information ontop of eachother,
+prep_gender_state = rbind(prep_f_state, prep_m_state)
+prep_gender_state
+
+ggplot(data = prep_gender_state, aes(x = year, y = pr_ep_users, fill = sex)) +
+  geom_col(position = "dodge") +
+  labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
+  theme_classic() +
+  scale_x_continuous(
+  breaks = seq(2012,2018,1),
+  label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
+  scale_y_continuous()
+
+
+```
+
 
 ```{r}
 # CHLAMYDIA AND GONORRHEA ONLY
