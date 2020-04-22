@@ -17,6 +17,7 @@ library(gt)
 library(rvest)
 library(reprex)
 library(fivethirtyeight)
+library(stringr)
 ```
 
 My work so far: My data comes from a variety of sources that includes the CDC,
@@ -199,15 +200,37 @@ prep_data_state
 
 ```{r prep racial estimation}
 # this is 2016 data.
-# over thirty days using includes 78,360 (100) and over 28 days includes 98,599 (100)
 # I think I will assume these rates as constant and see how it might explain different trends by race. Is there some way I can hold other variables constant?
 
 prep_race <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/table/T2/?report=objectonly")%>% 
   html_node("table") %>% 
   html_table(header = TRUE, fill = TRUE) %>% 
   clean_names() %>% 
-  slice(1, 16:20)
+  slice(16:20)
+
+# Changing names of the races so that they match the data set I have from the CDC. Also getting rid of unwanted characters and converting to numerics so that I can find percentage by demographic.
+race <- str_replace(prep_race$characteristic, "Black", "Black/ African American")
+race <- str_replace(race, "Hispanic", "Hispanic/ Latino")
+drug_use_30 <- str_replace(prep_race$length_of_drug_useno_percent, " \\(.*\\)", "")
+drug_use_30 <- str_replace(drug_use_30, ",", "")
+drug_use_30 <- as.numeric(drug_use_30)
+drug_use_28 <- str_replace(prep_race$length_of_drug_useno_percent_2, " \\(.*\\)", "")
+drug_use_28 <- str_replace(drug_use_28, ",", "")
+drug_use_28 <- as.numeric(drug_use_28)
+
+#Cleaning up the data so that I can pull the demographics of prep users. I have consolidated those users who are more than 28 days and those who are more than 30 days so that I can have one generalizable percentage.
+
+prep_race <- prep_race %>% 
+  mutate(race = race,
+         x = drug_use_28,
+         y = drug_use_28,
+         total = x + y,
+         proportion = total / sum(total)) %>% 
+select(race, proportion)
+
+
 prep_race
+
 ```
 
 ```{r PrEP growth rates for men and women_state}
