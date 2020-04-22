@@ -18,6 +18,11 @@ library(rvest)
 library(reprex)
 library(fivethirtyeight)
 library(stringr)
+library(usmap)
+library(shinythemes)
+library(ggcorrplot)
+library(htmltools)
+library(vembedr)
 ```
 
 My work so far: My data comes from a variety of sources that includes the CDC,
@@ -228,9 +233,7 @@ prep_race <- prep_race %>%
          proportion = total / sum(total)) %>% 
 select(race, proportion)
 
-
 prep_race
-
 ```
 
 ```{r PrEP growth rates for men and women_state}

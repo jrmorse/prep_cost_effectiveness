@@ -49,7 +49,7 @@ ui <- fluidPage(
                         # Cleaning the aesthetic of the page by adding a fluid row.
                         
                         fluidRow(column(2), column(8, 
-                                                
+                                                   
                                                    # Add in text to introduce and explain the project.
                                                    
                                                    p("Since the HIV/AIDS epidemic first began in 1981, amazing, albeit slow, progress
@@ -79,51 +79,48 @@ ui <- fluidPage(
                                                    savings. This type of analysis  will make it possible to consider if PrEP has
                                                    been a financially effective treatment in the eyes of the U.S. health system.")
                                                    
-# Define UI for application that draws a histogram
-#ui <- fluidPage(
-
-  #  sliderInput("n", "Select Graphs", 1,5,1),
-  #  plotOutput("plot")
-)
-)
-)
-)
-)
-
-
-server <- function(input, output, session) {
-    # Here is where I load the title image for my presentation. I got this image at:
-    # "https://www.jnj.com/innovation/6-surprising-things-you-may-not-know-about-hiv-aids-today"
-    
-    output$image <- renderImage({
-        # Return a list containing the filename and alt text
-        list(src = './graphics/title.png',
-             height = 444,
-             width = 800, style="display: block; margin-left: auto; margin-right: auto;")
-    }, deleteFile = FALSE
-    )
-    
-    # Here I load in the image of an arrow that I found at: 
-    # "http://icon-library.com/icon/scroll-down-icon-png-11.html"
-    
-    output$arrow <- renderImage({
-        # Return a list containing the filename and alt text
-        list(src = './graphics/downarrow.png',
-             height = 70,
-             width = 70, style="display: block; margin-left: auto; margin-right: auto;")
-    }, deleteFile = FALSE
-    )
-    
- #   output$plot <- renderImage({
-        # When input$n is 1, filename is ./shiny/image1.jpeg
- #       filename <- normalizePath(file.path(paste('image', input$n, '.jpeg', sep='')))
-        
-        # Return a list containing the filename
-#        list(src = filename,
-#             width = 700,
-#             height = 500)
-#    }, deleteFile = FALSE)
-}
-
-shinyApp(ui = ui, server = server)
-
+                                                   # Define UI for application that draws a histogram
+                                                   #ui <- fluidPage(
+                                                   
+                                                   #  sliderInput("n", "Select Graphs", 1,5,1),
+                                                   #  plotOutput("plot")
+                        ),
+                        
+                        
+                        server <- function(input, output, session) {
+                            # Here is where I load the title image for my presentation. I got this image at:
+                            # "https://www.jnj.com/innovation/6-surprising-things-you-may-not-know-about-hiv-aids-today"
+                            
+                            output$image <- renderImage({
+                                # Return a list containing the filename and alt text
+                                list(src = './graphics/title.png',
+                                     height = 444,
+                                     width = 800, style="display: block; margin-left: auto; margin-right: auto;")
+                            }, deleteFile = FALSE
+                            )
+                            
+                            # Here I load in the image of an arrow that I found at: 
+                            # "http://icon-library.com/icon/scroll-down-icon-png-11.html"
+                            
+                            output$arrow <- renderImage({
+                                # Return a list containing the filename and alt text
+                                list(src = './graphics/downarrow.png',
+                                     height = 70,
+                                     width = 70, style="display: block; margin-left: auto; margin-right: auto;")
+                            }, deleteFile = FALSE
+                            )
+                            
+                            #   output$plot <- renderImage({
+                            # When input$n is 1, filename is ./shiny/image1.jpeg
+                            #       filename <- normalizePath(file.path(paste('image', input$n, '.jpeg', sep='')))
+                            
+                            # Return a list containing the filename
+                            #        list(src = filename,
+                            #             width = 700,
+                            #             height = 500)
+                            #    }, deleteFile = FALSE)
+                        }
+                        
+                        shinyApp(ui = ui, server = server)
+                        
+                        
