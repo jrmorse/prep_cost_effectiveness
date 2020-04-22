@@ -98,7 +98,7 @@ server <- function(input, output, session) {
     output$image <- renderImage({
         # Return a list containing the filename and alt text
         list(src = './graphics/title.png',
-             height = 444,
+             height = 450,
              width = 800, style="display: block; margin-left: auto; margin-right: auto;")
     }, deleteFile = FALSE
     )
@@ -108,9 +108,9 @@ server <- function(input, output, session) {
     
     output$arrow <- renderImage({
         # Return a list containing the filename and alt text
-        list(src = './graphics/downarrow.png',
-             height = 70,
-             width = 70, style="display: block; margin-left: auto; margin-right: auto;")
+        list(src = './graphics/downarrow2.png',
+             height = 80,
+             width = 90, style="display: block; margin-left: auto; margin-right: auto;")
     }, deleteFile = FALSE
     )
     
@@ -126,4 +126,6 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui = ui, server = server)
+
+
 
