@@ -1,0 +1,12 @@
+name: prep_cost_effectiveness
+title: prep_cost_effectiveness
+username:
+account: john-morse
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2168041
+bundleId: 3052352
+url: https://john-morse.shinyapps.io/prep_cost_effectiveness/
+when: 1587598450.50193
+asMultiple: FALSE
+asStatic: FALSE
