@@ -294,7 +294,7 @@ chlamydia_gonorrhea
 hiv_aids_f <- read_xlsx("Data_Sets/CDC_Data/Atlas_CDC_HIV:AIDS_Female.xlsx",
   skip = 8) %>% 
   clean_names() %>% 
-  mutate(sex = "F")
+  mutate(sex = "Female")
 hiv_aids_f[hiv_aids_f == "Data not available"] <-NA
 
 # Here I read in all the CDC data for HIV/AIDS rates for males from 2008 to
@@ -303,7 +303,7 @@ hiv_aids_f[hiv_aids_f == "Data not available"] <-NA
 hiv_aids_m <- read_xlsx("Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx",
   skip = 8) %>% 
   clean_names() %>% 
-  mutate(sex = "M")
+  mutate(sex = "Male")
 hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
 
 # Here I merged the two HIV/AIDS datasets as the variables were the same for
@@ -322,7 +322,7 @@ hiv_aids_year <- hiv_aids_all %>%
   group_by(year) %>%
   summarize(total_cases = sum(cases))
 
- ggplot(hiv_aids_year, aes(x = year, y = total_cases)) +
+ hiv_total <- ggplot(hiv_aids_year, aes(x = year, y = total_cases)) +
    geom_point() +
    geom_text(aes(x = year, y = total_cases, label = total_cases),vjust = -1, nudge_y = .5) +
    labs(title="HIV Diagnoses by Year", subtitle = "2007-2017") +
@@ -374,21 +374,33 @@ ggplot(data = hiv_aids_transmission, aes(x = year, y = total_cases, fill = trans
   labs(fill = "Transmission Category")
 ```
 
-```{r transmission_category_model}
-
-
-
-```
 
 ```{r Male to male sexual contact}
 hiv_aids_maletomalesexualcontact <- hiv_aids_all %>% 
-  filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity == c("Black/African American", "White", "Hispanic/Latino")) %>%
+  filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
   group_by(year, race_ethnicity) %>%
   summarize(total_cases = sum(cases))
-hiv_aids_maletomalesexualcontact
 
 ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases, fill = race_ethnicity)) +
   geom_col(position = "dodge") +
+  facet_wrap(~ race_ethnicity) +
+  labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
+  theme_classic() +
+  scale_x_continuous(
+    name = "Year",
+    breaks = seq(2007,2017,1),
+    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
+  scale_y_continuous(
+    name = "New Diagnoses"
+  )
+```
+
+
+```{r}
+
+ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases)) +
+  geom_col() +
+  facet_wrap(~ race_ethnicity)
   labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
   theme_classic() +
   scale_x_continuous(
