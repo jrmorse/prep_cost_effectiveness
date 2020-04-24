@@ -227,7 +227,7 @@ drug_use_28 <- as.numeric(drug_use_28)
 
 prep_race <- prep_race %>% 
   mutate(race = race,
-         x = drug_use_28,
+         x = drug_use_30,
          y = drug_use_28,
          total = x + y,
          proportion = total / sum(total)) %>% 

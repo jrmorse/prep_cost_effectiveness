@@ -80,7 +80,7 @@ ui <- fluidPage(
                                                    extra resources devoted towards STI treatment has surpassed any potential
                                                    savings. This type of analysis  will make it possible to consider if PrEP has
                                                    been a financially effective treatment in the eyes of the U.S. health system."),
-                                                   br (),
+                                                   br()
                         )
                         )
                ),
@@ -137,8 +137,22 @@ ui <- fluidPage(
                                                                 )
                                                    )
                ),
-               tabPanel("PrEP"),
-               imageOutput("medicine2", width = "100%", height = "100%")
+               
+               # Creating the third tab
+               
+               tabPanel("PrEP",
+                        
+                        #Setting a cover photo for the page.
+                        
+                        imageOutput("medicine2", width = "100%", height = "100%"),
+                        br(),
+                        
+                        # Here I add in a static plot to show rates of prep usage.
+                        fluidRow(column(2), column(8,
+                        plotOutput("prepTotal", width = "100%", height = "100%"), br()
+                        )
+                        )
+               )
     )
 )
 
@@ -180,7 +194,6 @@ server <- function(input, output, session) {
                 name = "New Diagnoses",
                 limits=c(35000, 50000))
     },
-    
     height = 400,
     width = 700
     )
@@ -204,14 +217,16 @@ server <- function(input, output, session) {
                name = "New Diagnoses")
       
      }) 
+     
      # Create plot of HIV diagnosis by race
+     
      output$race <- renderPlot({
          filtered2<-
              hiv_aids_maletomalesexualcontact %>% 
              filter(race_ethnicity %in% input$raceInput)
          ggplot(filtered2, aes(x = year, y = total_cases, fill = race_ethnicity)) +
              geom_col(position = "dodge") +
-            # facet_wrap(~ race_ethnicity) +
+            facet_wrap(~ race_ethnicity) +
              labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
              theme_classic() +
              scale_x_continuous(
@@ -222,13 +237,34 @@ server <- function(input, output, session) {
                  name = "New Diagnoses"
              )
      })
+     
      output$medicine2 <- renderImage({
+         
          # Return a list containing the filename and alt text
+         
          list(src = './graphics/medicine2.png',
               height = 450,
               width = 800, style="display: block; margin-left: auto; margin-right: auto;")
      }, deleteFile = FALSE
      )
+     
+     output$prepTotal <- renderPlot({
+         prep_gender_state %>% 
+         ggplot(aes(x = year, y = pr_ep_users, fill = sex)) +
+             geom_col(position = "dodge") +
+             labs(title="PrEP Users by Gender", subtitle = "2012-2018",
+                  x = "Year",
+                  y = "Total Users",
+                  fill = "Sex") +
+             theme_classic() +
+             scale_x_continuous(
+                 breaks = seq(2012,2018,1),
+                 label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
+             scale_y_continuous()
+     },
+     height = 400,
+     width = 700
+     )         
 }
 
 shinyApp(ui = ui, server = server)
