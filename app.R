@@ -16,6 +16,7 @@ library(shinythemes)
 library(ggcorrplot)
 library(htmltools)
 library(vembedr)
+library(wesanderson)
 
 # Need to load in the appropriate data
 
@@ -33,12 +34,12 @@ ui <- fluidPage(
                         
                         # Load in the first image for the front page.
                         
-                        imageOutput("image", width = "100%", height = "100%"),
+                        imageOutput("image", width = "100%", height = "100%"), br(),
                         
                         # Title of the page along with a subtitle. Likely will need to tweek this.
                         
                         h1(tags$b("HIV in the United States & The Promise of PrEP"), align = "center"),
-                        p(tags$em("Inequity in Prevalence and Prevention"), align = "center"),
+                        p(tags$em("Inequity in Prevalence and Prevention"), align = "center"), br(),
                         
                         # Presents an arrow so that readers know the next step is to scroll.
                         
@@ -87,6 +88,21 @@ ui <- fluidPage(
                                                    # This should be the beginning of the second tab.
                                                    
                                                    tabPanel("HIV",
+                                                            
+                                                            tags$head(
+                                                              tags$style(HTML("hr {border-top: 1px solid #000000;}"))
+                                                            ),
+                                                            
+                                                            # Here I load the cover photo.
+                                                            
+                                                            imageOutput("population", width = "100%", height = "100%"), br(),
+                                                            
+                                                            # Here is the title for the HIV page
+                                                            
+                                                            h1(tags$b("Who is being diagnosed?"), align = "center"), br(),
+                                                            
+                                                            hr(),
+                                                            
                                                             sidebarLayout(
                                                               sidebarPanel(
                                                                 # Set an icon for the webpage along with wording
@@ -94,7 +110,10 @@ ui <- fluidPage(
                                                                 HTML('<script> document.title = "HIV in the United States & The Promise of PrEP"; </script>'),
                                                                 tags$head(tags$link(rel="shortcut icon", href="https://upload.wikimedia.org/wikipedia/commons/e/e6/World_Aids_Day_Ribbon.png")),
                                                                 
-                                                                # Add in short description about what this plot is.
+                                                                # A short description of the options.
+                                                                
+                                                                p(tags$em("Select either Male, Female, or both sexes to see how rates of diagnoses vary by sex.")),
+                                                                
                                                                 selectInput("sexInput", "Sex", c(
                                                                     "Male",
                                                                     "Female"), multiple = TRUE)
@@ -111,7 +130,8 @@ ui <- fluidPage(
                                                                                                                                "Other"), multiple = TRUE)
                                                                 ),
                                                               mainPanel(
-                                                                # Here I add in a fluid row. I'm not sure if I'll change this so that it matches the aesthetic of the first page.
+                                                               
+                                                                 # Here I add in a fluid row. I'm not sure if I'll change this so that it matches the aesthetic of the first page.
                                                                   
                                                                   fluidRow(column(2), column(8,
                                                                                              # Here I load in the plot
@@ -124,6 +144,11 @@ ui <- fluidPage(
                                                             # Here I add the second chart to this page.
                                                             
                                                                 sidebarPanel(
+                                                                  
+                                                                  # A short description of the options.
+                                                                  
+                                                                  p(tags$em("Select one or multiple races from the options below")),
+                                                                  
                                                                     selectInput("raceInput", "Race", c("Black/African American",
                                                                                                        "White",
                                                                                                        "Hispanic/Latino",
@@ -142,19 +167,43 @@ ui <- fluidPage(
                
                tabPanel("PrEP",
                         
+                        tags$head(
+                          tags$style(HTML("hr {border-top: 1px solid #000000;}"))
+                        ),
+                        
                         #Setting a cover photo for the page.
                         
                         imageOutput("medicine2", width = "100%", height = "100%"),
                         br(),
                         
-                        # Here I add in a static plot to show rates of prep usage.
+                        # Title for the page
+                        
+                        h1(tags$b("Who is using PrEP?"), align = "center"), br(),
+                        
+                        hr(),
+                        
+                        # Here I add in a static plot to show rates of prep usage. I also add the fluid row.
+                        
                         fluidRow(column(2), column(8,
-                        plotOutput("prepTotal", width = "100%", height = "100%"), br()
-                        )
-                        )
+                                                   p("The key takeaway is that the majority of the users are men. In fact, in 2018 only about 6.6% of the 132333 users were women."),br(),
+                                                   
+                                                   plotOutput("prepTotal", width = "100%", height = "100%"), br(),
+                                                  
+                                                    p("Curious to know how PrEP usage varies accross demographics? Imagine you could take a sample of a size of your chosing. Enter the number of individuals you would like in your sample in order to see the racial breakdown of users. You will note that the userbase is overwhelmingly comprised of white men. In 2016 it was estimated that 67% of the users were White men, 12% Black men, 13% Hispanic or Latino men, and 4% Asian men."),br(),
+                                                   
+                                                   # Here I add in a button that I will use to generate a histogram showing the race of male users.
+                                                   
+                                                   numericInput("n", "Sample Size", 50),
+                                                   actionButton("go", "Go"),
+                                                   plotOutput("x")
+                                                   )
+                                 )
+                        ),
+               
+               tabPanel("About",
+               )
                )
     )
-)
 
 server <- function(input, output, session) {
     # Here is where I load the title image for my presentation. I got this image at:
@@ -179,11 +228,21 @@ server <- function(input, output, session) {
     }, deleteFile = FALSE
     )
     
+    output$population <- renderImage({
+      # Return a list containing the filename and alt text
+      list(src = './graphics/population.png',
+           height = 450,
+           width = 800, style="display: block; margin-left: auto; margin-right: auto;")
+    }, deleteFile = FALSE
+    )
+    
+    # Loading the static graph to show general downward trend in HIV diagnoses
+    
     output$hivTotal <- renderPlot({
         hiv_aids_year %>% 
         ggplot(aes(x = year, y = total_cases)) +
-            geom_point() +
-            geom_text(aes(x = year, y = total_cases, label = total_cases),vjust = -1, nudge_y = .5) +
+            geom_point(color = "lightskyblue") +
+            geom_text(aes(x = year, y = total_cases, label = total_cases),color = "deepskyblue3", vjust = -1, nudge_y = .5) +
             labs(title="HIV Diagnoses by Year", subtitle = "2007-2017") +
             theme_classic() +
             scale_x_continuous(
@@ -198,16 +257,18 @@ server <- function(input, output, session) {
     width = 700
     )
     
-    # Create a plot of nationwide users
+    # Create a plot of HIV diagnoses by sex/ transmission category
+    
      output$plot <- renderPlot({
        filtered <-
          hiv_aids_transmission %>% 
          filter(transmission_category %in% input$transmissionInput,
                 sex %in% input$sexInput)
        
-       ggplot(data = filtered, aes(x = year, y = total_cases)) +
+       ggplot(data = filtered, aes(x = year, y = total_cases, fill = sex)) +
          geom_col() +
          theme_classic() +
+         scale_fill_manual(values = wes_palette("Darjeeling2", n = 2)) +
          labs(title="HIV Diagnosis by Sex and Category", subtitle = "2007-2017") +
            scale_x_continuous(
                name = "Year",
@@ -224,8 +285,9 @@ server <- function(input, output, session) {
          filtered2<-
              hiv_aids_maletomalesexualcontact %>% 
              filter(race_ethnicity %in% input$raceInput)
-         ggplot(filtered2, aes(x = year, y = total_cases, fill = race_ethnicity)) +
-             geom_col(position = "dodge") +
+         
+         ggplot(filtered2, aes(x = year, y = total_cases)) +
+             geom_col(fill = wes_palette("IsleofDogs1", n = 1)) +
             facet_wrap(~ race_ethnicity) +
              labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
              theme_classic() +
@@ -238,6 +300,8 @@ server <- function(input, output, session) {
              )
      })
      
+     # Loading the pages title image
+     
      output$medicine2 <- renderImage({
          
          # Return a list containing the filename and alt text
@@ -248,6 +312,8 @@ server <- function(input, output, session) {
      }, deleteFile = FALSE
      )
      
+    # Here I am creating the plotthat shows how PrEP has been used by genders on an annual basis.
+     
      output$prepTotal <- renderPlot({
          prep_gender_state %>% 
          ggplot(aes(x = year, y = pr_ep_users, fill = sex)) +
@@ -256,15 +322,42 @@ server <- function(input, output, session) {
                   x = "Year",
                   y = "Total Users",
                   fill = "Sex") +
-             theme_classic() +
-             scale_x_continuous(
-                 breaks = seq(2012,2018,1),
-                 label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
-             scale_y_continuous()
+         theme_classic() +
+         scale_fill_manual(values = wes_palette("Darjeeling2", n = 2)) +
+         scale_x_continuous(
+           breaks = seq(2012,2018,1),
+           label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
+         scale_y_continuous()
      },
      height = 400,
      width = 700
-     )         
+     )     
+     
+     # This is for the reactive button on the PrEP page
+     
+     reactive <- eventReactive(input$go, {
+       input$n
+     })
+   
+     # This is a reactive plot that fills the sample size based off the value entered by the user. 
+     # The point of this is to show how many white people take it vs. other racial groups.
+     
+     output$x <- renderPlot({
+       prep_race_sample %>% 
+         rep_sample_n(size = reactive(), replace = TRUE) %>% 
+         select(race) %>% 
+         ggplot(aes(x = race, fill = race)) +
+         geom_bar() +
+         theme_classic() + 
+         scale_fill_manual(values = wes_palette("Darjeeling2", n = 5)) +
+         labs(
+           title = "Male PrEP Users",
+           subtitle = "Racial Charecteristics of Sample",
+           x = "Race",
+           y = "Count"
+         )
+       
+     })
 }
 
 shinyApp(ui = ui, server = server)

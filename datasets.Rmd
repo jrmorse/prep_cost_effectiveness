@@ -23,6 +23,8 @@ library(shinythemes)
 library(ggcorrplot)
 library(htmltools)
 library(vembedr)
+library(wesanderson)
+library(infer)
 ```
 
 My work so far: My data comes from a variety of sources that includes the CDC,
@@ -138,6 +140,7 @@ indirect_costs
 
 ```
 ```{r INDIRECT & DIRECT COSTS}
+ # this is what I will use as a reference.
 
 complete_costs <- direct_costs %>% 
   full_join(indirect_costs, direct_costs, by = c("parameter"= "parameter","sex"="sex")) %>% 
@@ -147,7 +150,7 @@ complete_costs
 ```
 
 
-```{r, PREP DATA_National, include = FALSE}
+{r, PREP DATA_National, include = FALSE
 # Empty data set where I will store the files once they'e loaded in.
 prep_data_1 <- data.frame()
 
@@ -172,8 +175,6 @@ for (i in 1:length(list)){
 }
 
 prep_data_1
-
-```
 
 
 ```{r Prep data state}
@@ -213,6 +214,12 @@ prep_race <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/tab
   clean_names() %>% 
   slice(16:20)
 
+prep_race1 <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/table/T2/?report=objectonly")%>% 
+  html_node("table") %>% 
+  html_table(header = TRUE, fill = TRUE) %>% 
+  clean_names()
+
+prep_race1
 # Changing names of the races so that they match the data set I have from the CDC. Also getting rid of unwanted characters and converting to numerics so that I can find percentage by demographic.
 race <- str_replace(prep_race$characteristic, "Black", "Black/ African American")
 race <- str_replace(race, "Hispanic", "Hispanic/ Latino")
@@ -223,7 +230,7 @@ drug_use_28 <- str_replace(prep_race$length_of_drug_useno_percent_2, " \\(.*\\)"
 drug_use_28 <- str_replace(drug_use_28, ",", "")
 drug_use_28 <- as.numeric(drug_use_28)
 
-#Cleaning up the data so that I can pull the demographics of prep users. I have consolidated those users who are more than 28 days and those who are more than 30 days so that I can have one generalizable percentage.
+# Cleaning up the data so that I can pull the demographics of prep users. I have consolidated those users who are more than 28 days and those who are more than 30 days so that I can have one generalizable percentage. 
 
 prep_race <- prep_race %>% 
   mutate(race = race,
@@ -255,6 +262,7 @@ prep_f_state
 prep_gender_state = rbind(prep_f_state, prep_m_state)
 prep_gender_state
 
+
 ggplot(data = prep_gender_state, aes(x = year, y = pr_ep_users, fill = sex)) +
   geom_col(position = "dodge") +
   labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
@@ -264,8 +272,49 @@ ggplot(data = prep_gender_state, aes(x = year, y = pr_ep_users, fill = sex)) +
   label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
   scale_y_continuous()
 
-
 ```
+
+```{r prep_m_state with race}
+# It is likely that female racial use is different than males. Females, however, make up such a small portion of users, the proportion I have generated is likely quite accurate. I will not, however, apply the racial estimations to females who use prep as these values may not be representative.
+
+prep_m_state_race <- prep_m_state %>% 
+  group_by(year) %>%
+  summarise(pr_ep_users = sum(pr_ep_users))
+prep_m_state_race
+
+prep_f_state_race <- prep_f_state %>% 
+  group_by(year) %>%
+  summarise(pr_ep_users = sum(pr_ep_users))
+prep_f_state_race
+
+# Here I am making a dataframe based off total male prep users. I assigned each user from 2018 with an ID number. From there, I applied the racial demographic estimates from the 2016 article that I cited. When I run a prop.table function, the percentages of users match up. I will use this frame to generate the liklihood of selecting a user who is of race x. Total values of races are included here: white = 1:84176, black = 14277, latino = 16571, asian = 5563, other = 2947.
+
+prep_race_sample <- data.frame(id = 1:123534) %>% 
+  mutate(race = ifelse(id %in% 1:84176, "White",
+                       ifelse(id %in% 84177:98454, "Black/ African American",
+                              ifelse(id %in% 98455: 115026, "Hispanic/ Latino",
+                                     ifelse(id %in% 115027: 120590, "Asian", "Unspecified")))))
+prep_race_sample %>% 
+  rep_sample_n(size = 5, replace = TRUE) %>% 
+  select(race) %>% 
+  ggplot(aes(x = race)) +
+  geom_bar() +
+  theme_classic() + 
+  labs(
+    title = "Racial Charecteristics of Sample",
+    x = "Race",
+    y = "Count"
+  )
+  
+
+y %>% 
+prep_race_sample %>% 
+  group_by(id)
+  mutate(is_white = (race== "White")) %>% 
+  summarize(num_white = sum(is_white)) %>% 
+  mutate(prop_white = num_white/123534)
+
+``` 
 
 
 ```{r}
@@ -318,9 +367,13 @@ hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
 ```
 
 ```{r HIV Cases by year Graph}
+# A table with hiv diagnoses by year for both sexes.
+
 hiv_aids_year <- hiv_aids_all %>% 
   group_by(year) %>%
   summarize(total_cases = sum(cases))
+
+# A plot that I have included in shiny. All diagnoses by year.
 
  hiv_total <- ggplot(hiv_aids_year, aes(x = year, y = total_cases)) +
    geom_point() +
@@ -338,6 +391,7 @@ hiv_aids_year <- hiv_aids_all %>%
 ```
 
 ```{r HIV Diagnoses by Gender Graph}
+# A graph of HIV diagnoses by gender.
 
 ggplot(data = hiv_aids_all, aes(x = year, y = cases, fill = sex)) +
   geom_col(position = "dodge") +
@@ -352,7 +406,7 @@ ggplot(data = hiv_aids_all, aes(x = year, y = cases, fill = sex)) +
   )
 ```
 
-```{r HIV Diagnoses Transmission Category Tibble}
+```{r HIV Diagnoses Transmission Category table}
 hiv_aids_transmission <- hiv_aids_all %>% 
   group_by(transmission_category, year, sex) %>%
   summarize(total_cases = sum(cases))
@@ -364,6 +418,7 @@ ggplot(data = hiv_aids_transmission, aes(x = year, y = total_cases, fill = trans
   geom_col(position = "dodge") +
   labs(title="HIV Diagnosis by Category", subtitle = "2007-2017") +
   theme_classic() +
+  # scale_fill_manual(values = wes_palette(name="Darjeeling2", n=5)) +
   scale_x_continuous(
     name = "Year",
     breaks = seq(2007,2017,2),
@@ -397,22 +452,6 @@ ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases, f
 
 
 ```{r}
-
-ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases)) +
-  geom_col() +
-  facet_wrap(~ race_ethnicity)
-  labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
-  theme_classic() +
-  scale_x_continuous(
-    name = "Year",
-    breaks = seq(2007,2017,1),
-    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
-  scale_y_continuous(
-    name = "New Diagnoses"
-  )
-```
-
-```{r}
 # SYPHILIS ONLY
 # Here I read in all the CDC data for both early latent and congential syphilis
 # rates from 2008 to 2017. I still should rename the columns so that it is clear
@@ -423,9 +462,5 @@ syphilis <- read_xlsx("Data_Sets/CDC_Data/Atlas_Congenital&EarlyLatentSyphilis.x
   clean_names()
 syphilis[syphilis == "Data not available"] <-NA
 
-syphilis <- syphilis %>% 
-  gt()
-
-syphilis
 ```
 

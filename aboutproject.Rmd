@@ -1,0 +1,42 @@
+---
+title: "About"
+author: "John Morse"
+date: "4/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<http://rmarkdown.rstudio.com>.
+
+Email: jmorse@hsph.harvard.edu
+
+Github Repo: https://github.com/jrmorse/prep_cost_effectiveness
+
+GitHub Profile: https://github.com/jrmorse
+
+This webapp is the final project for the Harvard Gov1005 course. Please feel free to reach out with any comments or questions.
+
+# Raw Data
+
+With this project, I have aggregrated data from diverse sources including
+the CDC, Rollins School of Public Health with Gilead Sciences, and various academic
+papers presented by the National Center for Biotechnology Information.
+
+All of my statistics regarding HIV and STI rates were taken directly from the CDC. Cost estimations of diseases were taken from academic journals as were the racial estimations for PrEP users.
+
+As PrEP is so new, there are no official statistics on the actual demography of it's users. This is a limitation of my work.
+
+# Process
+
+The first work I did was to scrape academic journals in order to gather cost estimates for HIV and STIs. This data is from 2006, so I adjusted the value to convey 2020 USD. 
+
+After that I loaded in data relating to PrEP usage. Once I loaded and cleaned this data, I scraped another academic journal in order to gauge the estimated racial demographics of users. 
+
+Once this information was in R, I accounted for HIV Rates as well as STI rates. 
+
+With all this data cleaned and matched appropriately, I was able to begin the process of creating graphs and interactive tools on the Shiny app.
+
+# Limitations
