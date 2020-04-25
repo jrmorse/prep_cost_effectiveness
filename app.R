@@ -17,6 +17,7 @@ library(ggcorrplot)
 library(htmltools)
 library(vembedr)
 library(wesanderson)
+library(infer)
 
 # Need to load in the appropriate data
 
@@ -155,6 +156,12 @@ ui <- fluidPage(
                                                                                                        "Asian"), multiple = TRUE)
                                                                                 ),
                                                                     mainPanel(
+                                                                      # I add this in because if not there is an error that one or more values is needed for faceting.
+                                                                      
+                                                                      tags$style(type="text/css",
+                                                                                 ".shiny-output-error { visibility: hidden; }",
+                                                                                 ".shiny-output-error:before { visibility: hidden; }"
+                                                                      ),
                                                                         fluidRow(column(2), column(8, 
                                                                         plotOutput("race")
                                                                     )
@@ -344,8 +351,7 @@ server <- function(input, output, session) {
      
      output$x <- renderPlot({
        prep_race_sample %>% 
-         rep_sample_n(size = reactive(), replace = TRUE) %>% 
-         select(race) %>% 
+         rep_sample_n(size = reactive(), replace = TRUE, reps = 1) %>% 
          ggplot(aes(x = race, fill = race)) +
          geom_bar() +
          theme_classic() + 

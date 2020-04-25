@@ -377,14 +377,13 @@ summary {
 <div id="raw-data" class="section level1">
 <h1>Raw Data</h1>
 <p>With this project, I have aggregrated data from diverse sources including the CDC, Rollins School of Public Health with Gilead Sciences, and various academic papers presented by the National Center for Biotechnology Information.</p>
-<p>All of my statistics regarding HIV and STI rates were taken directly from the CDC. Cost estimations of diseases were taken from academic journals as were the racial estimations for PrEP users.</p>
-<p>As PrEP is so new, there are no official statistics on the actual demography of it’s users. This is a limitation of my work.</p>
+<p>All of my statistics regarding HIV and STI rates were taken directly from the CDC. Cost estimations of diseases were taken from academic journals as were the racial estimations for PrEP users. As PrEP is relatively new, there are no official statistics on the actual demography of its’ users. This is a limitation of my work.</p>
 </div>
 <div id="process" class="section level1">
 <h1>Process</h1>
-<p>The first work I did was to scrape academic journals in order to gather cost estimates for HIV and STIs. This data is from 2006, so I adjusted the value to convey 2020 USD.</p>
-<p>After that I loaded in data relating to PrEP usage. Once I loaded and cleaned this data, I scraped another academic journal in order to gauge the estimated racial demographics of users.</p>
-<p>Once this information was in R, I accounted for HIV Rates as well as STI rates.</p>
+<p>The first work I did was to scrape academic journals in order to gather cost estimates for HIV and STIs. The information here is from a highly cited paper that estimates both direct and indirect costs of various illnesses. This data is from 2006, so I adjusted the value of inflation to convey 2020 USD.</p>
+<p>After handling the costs, I set about loading statistics on the rates of HIV and STIs. To begin, I loaded data relating to PrEP usage. This information was set forth by Gilead with Rollins School of Public health and can be found here <a href="https://aidsvu.org/" class="uri">https://aidsvu.org/</a> as as in my repo. Once I loaded and cleaned this data, I scraped another academic journal in order to gauge the estimated racial demographics of users.</p>
+<p>Once this information was in R, I followed a similar process to load statistics to account for HIV and STI rates mostly beginning in 2012. These datasets came directly from the CDC.</p>
 <p>With all this data cleaned and matched appropriately, I was able to begin the process of creating graphs and interactive tools on the Shiny app.</p>
 </div>
 <div id="limitations" class="section level1">

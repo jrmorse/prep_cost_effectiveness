@@ -255,22 +255,22 @@ prep_m_state
 prep_f_state <- prep_data_state %>% 
   select(year, female_pr_ep_users, state_abbreviation, state) %>% 
   mutate(sex = "Female")
-colnames(prep_f_state)[2] <- c("pr_ep_users")
+colnames(prep_f_state)[2] <- c("pr_ep_users") 
 prep_f_state
 
 # Here I'll use the bind function to list the information ontop of eachother,
-prep_gender_state = rbind(prep_f_state, prep_m_state)
+prep_gender_state <- rbind(prep_f_state, prep_m_state) 
 prep_gender_state
 
+# this graph isn't right. Im not sure why, but the values for users doesnt match up to the y axis
 
 ggplot(data = prep_gender_state, aes(x = year, y = pr_ep_users, fill = sex)) +
   geom_col(position = "dodge") +
   labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
-  theme_classic() +
+  theme_classic()+
   scale_x_continuous(
   breaks = seq(2012,2018,1),
-  label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
-  scale_y_continuous()
+  label = c("2012", "2013", "2014", "2015", "2016","2017","2018"))
 
 ```
 
@@ -287,6 +287,12 @@ prep_f_state_race <- prep_f_state %>%
   summarise(pr_ep_users = sum(pr_ep_users))
 prep_f_state_race
 
+prep_f_state_race <- prep_gender_state %>% 
+  filter(year== 2018 & sex == "Male") %>% 
+  summarise(pr_ep_users = sum(pr_ep_users))
+prep_f_state_race
+
+
 # Here I am making a dataframe based off total male prep users. I assigned each user from 2018 with an ID number. From there, I applied the racial demographic estimates from the 2016 article that I cited. When I run a prop.table function, the percentages of users match up. I will use this frame to generate the liklihood of selecting a user who is of race x. Total values of races are included here: white = 1:84176, black = 14277, latino = 16571, asian = 5563, other = 2947.
 
 prep_race_sample <- data.frame(id = 1:123534) %>% 
@@ -295,8 +301,8 @@ prep_race_sample <- data.frame(id = 1:123534) %>%
                               ifelse(id %in% 98455: 115026, "Hispanic/ Latino",
                                      ifelse(id %in% 115027: 120590, "Asian", "Unspecified")))))
 prep_race_sample %>% 
-  rep_sample_n(size = 5, replace = TRUE) %>% 
-  select(race) %>% 
+  rep_sample_n(size = 5, replace = TRUE, reps = 1) %>% 
+  #select(race) %>% 
   ggplot(aes(x = race)) +
   geom_bar() +
   theme_classic() + 
