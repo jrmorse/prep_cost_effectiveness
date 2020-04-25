@@ -369,25 +369,31 @@ summary {
 </div>
 
 
-<p><a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<hr />
+<div id="personal-information" class="section level3">
+<h3>Personal Information</h3>
 <p>Email: <a href="mailto:jmorse@hsph.harvard.edu" class="email">jmorse@hsph.harvard.edu</a></p>
 <p>Github Repo: <a href="https://github.com/jrmorse/prep_cost_effectiveness" class="uri">https://github.com/jrmorse/prep_cost_effectiveness</a></p>
 <p>GitHub Profile: <a href="https://github.com/jrmorse" class="uri">https://github.com/jrmorse</a></p>
 <p>This webapp is the final project for the Harvard Gov1005 course. Please feel free to reach out with any comments or questions.</p>
-<div id="raw-data" class="section level1">
-<h1>Raw Data</h1>
+<hr />
+</div>
+<div id="raw-data" class="section level3">
+<h3>Raw Data</h3>
 <p>With this project, I have aggregrated data from diverse sources including the CDC, Rollins School of Public Health with Gilead Sciences, and various academic papers presented by the National Center for Biotechnology Information.</p>
 <p>All of my statistics regarding HIV and STI rates were taken directly from the CDC. Cost estimations of diseases were taken from academic journals as were the racial estimations for PrEP users. As PrEP is relatively new, there are no official statistics on the actual demography of its’ users. This is a limitation of my work.</p>
+<hr />
 </div>
-<div id="process" class="section level1">
-<h1>Process</h1>
-<p>The first work I did was to scrape academic journals in order to gather cost estimates for HIV and STIs. The information here is from a highly cited paper that estimates both direct and indirect costs of various illnesses. This data is from 2006, so I adjusted the value of inflation to convey 2020 USD.</p>
-<p>After handling the costs, I set about loading statistics on the rates of HIV and STIs. To begin, I loaded data relating to PrEP usage. This information was set forth by Gilead with Rollins School of Public health and can be found here <a href="https://aidsvu.org/" class="uri">https://aidsvu.org/</a> as as in my repo. Once I loaded and cleaned this data, I scraped another academic journal in order to gauge the estimated racial demographics of users.</p>
-<p>Once this information was in R, I followed a similar process to load statistics to account for HIV and STI rates mostly beginning in 2012. These datasets came directly from the CDC.</p>
+<div id="process" class="section level3">
+<h3>Process</h3>
+<p>The first work I did was to scrape academic journals in order to gather cost estimates for HIV and STIs. The information here is from a highly cited paper that estimates both direct and indirect costs of various illnesses. The referenced paper can be found here: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/</a>. This data is from 2006, so I adjusted the value of inflation to convey 2020 USD.</p>
+<p>After handling the costs, I set about loading statistics on the rates of HIV and STIs. To begin, I loaded data relating to PrEP usage. This information was set forth by Gilead with Rollins School of Public health and can be found here <a href="https://aidsvu.org/" class="uri">https://aidsvu.org/</a> as as in my repo. Once I loaded and cleaned this data, I scraped another academic journal in order to gauge the estimated racial demographics of users. The paper I used can be accessed here: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/</a>.</p>
+<p>Once this information was in R, I followed a similar process to load statistics to account for HIV and STI rates mostly beginning in 2012. These datasets came directly from a CDC platform called AtlasPlus. This website can be found here: <a href="https://www.cdc.gov/nchhstp/atlas/index.htm" class="uri">https://www.cdc.gov/nchhstp/atlas/index.htm</a> as well as in my repo.</p>
 <p>With all this data cleaned and matched appropriately, I was able to begin the process of creating graphs and interactive tools on the Shiny app.</p>
+<hr />
 </div>
-<div id="limitations" class="section level1">
-<h1>Limitations</h1>
+<div id="limitations" class="section level3">
+<h3>Limitations</h3>
 </div>
 
 
