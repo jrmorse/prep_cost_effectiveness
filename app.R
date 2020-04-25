@@ -67,25 +67,25 @@ ui <- fluidPage(
                                                    link the advent of PrEP in the United States to this increased observation of
                                                    STIs, before discerning the cost efficiency of PrEP and its’ impact on the
                                                    United States’ healthcare system."), br(),
-                                                   
-                                                   # Here I load a graph to show the decrease in HIV diagnosis.
                                                   
-                                                   plotOutput("hivTotal", width = "100%", height = "100%"), br(),
-                                                   
-                                                   p("With this project, I have aggregrated data from diverse sources including 
-                                                   the CDC, Rollins School of Public Health with Gilead Sciences, and academic
-                                                     research presented by the National Center for Biotechnology Information."),
-                                                   
                                                    p("Additionally, I have pulled in data regarding the estimated costs for all STIs
                                                    which include the direct medical costs of HIV. With this information, we can see
                                                    if the decreased numbers of HIV has saved the U.S. healthcare money, or if the
                                                    extra resources devoted towards STI treatment has surpassed any potential
                                                    savings. This type of analysis  will make it possible to consider if PrEP has
                                                    been a financially effective treatment in the eyes of the U.S. health system."),
-                                                   br()
-                        )
-                        )
-               ),
+                                                   br(), 
+                                                   
+                                                   p("The first piece of data to consider is the general downward trend in HIV diagnoses as is shown below:"), br(),
+                                                   
+                                                   # Here I load a graph to show the decrease in HIV diagnosis.
+                                                  
+                                                   plotOutput("hivTotal", width = "100%", height = "100%"), br(),
+                                                   
+                                                   p("As you will see in the coming sections of this app, this observed downward trend may not tell the whole story..."), br()
+                                                   )
+                                 )
+                        ),
                                                    # This should be the beginning of the second tab.
                                                    
                                                    tabPanel("HIV",
@@ -158,10 +158,10 @@ ui <- fluidPage(
                                                                     mainPanel(
                                                                       # I add this in because if not there is an error that one or more values is needed for faceting.
                                                                       
-                                                                      tags$style(type="text/css",
-                                                                                 ".shiny-output-error { visibility: hidden; }",
-                                                                                 ".shiny-output-error:before { visibility: hidden; }"
-                                                                      ),
+                                                                      #tags$style(type="text/css",
+                                                                                # ".shiny-output-error { visibility: hidden; }",
+                                                                                 #".shiny-output-error:before { visibility: hidden; }"
+                                                                      #),
                                                                         fluidRow(column(2), column(8, 
                                                                         plotOutput("race")
                                                                     )
@@ -207,8 +207,14 @@ ui <- fluidPage(
                                  )
                         ),
                
+               # This is my about page. I set up the same columns with fluid rows so that it matches other pages.
                tabPanel("About",
-               )
+                        
+                        fluidRow(column(2), column(8,
+                                                   includeMarkdown("aboutproject.Rmd")
+                                                   )
+                                 )
+                        )
                )
     )
 
@@ -323,7 +329,7 @@ server <- function(input, output, session) {
      
      output$prepTotal <- renderPlot({
          prep_gender_state %>% 
-         ggplot(aes(x = year, y = pr_ep_users, fill = sex)) +
+         ggplot(aes(x = year, y = total_cases, fill = sex)) +
              geom_col(position = "dodge") +
              labs(title="PrEP Users by Gender", subtitle = "2012-2018",
                   x = "Year",
@@ -363,6 +369,12 @@ server <- function(input, output, session) {
            y = "Count"
          )
        
+     })
+     
+     # Here I load in the about page of my project. It is an HTML document.
+     
+     output$about <- renderUI({
+       HTML(markdown::markdownToHTML(knit('aboutproject.html', quiet = TRUE)))
      })
 }
 

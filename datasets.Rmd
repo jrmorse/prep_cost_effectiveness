@@ -214,12 +214,6 @@ prep_race <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/tab
   clean_names() %>% 
   slice(16:20)
 
-prep_race1 <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/table/T2/?report=objectonly")%>% 
-  html_node("table") %>% 
-  html_table(header = TRUE, fill = TRUE) %>% 
-  clean_names()
-
-prep_race1
 # Changing names of the races so that they match the data set I have from the CDC. Also getting rid of unwanted characters and converting to numerics so that I can find percentage by demographic.
 race <- str_replace(prep_race$characteristic, "Black", "Black/ African American")
 race <- str_replace(race, "Hispanic", "Hispanic/ Latino")
@@ -258,11 +252,21 @@ prep_f_state <- prep_data_state %>%
 colnames(prep_f_state)[2] <- c("pr_ep_users") 
 prep_f_state
 
-# Here I'll use the bind function to list the information ontop of eachother,
-prep_gender_state <- rbind(prep_f_state, prep_m_state) 
-prep_gender_state
+# Here I'll use the bind function to list the information ontop of eachother. I did not realize this earlier, but I cannot do this if I am grouping by state. If so, the values on the y axis are all wrong.
 
-# this graph isn't right. Im not sure why, but the values for users doesnt match up to the y axis
+prep_gender_state <- rbind(prep_f_state, prep_m_state) %>% 
+  group_by(year, sex) %>% 
+  summarize(total_cases = sum(pr_ep_users))
+
+# this graph is based off the dataset above and should be working correctly now that I've removed state from the dataset.
+
+ggplot(data = prep_gender_state, aes(x = year, y = total_cases, fill = sex)) +
+  geom_col(position = "dodge") +
+  labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
+  theme_classic()+
+  scale_x_continuous(
+  breaks = seq(2012,2018,1),
+  label = c("2012", "2013", "2014", "2015", "2016","2017","2018"))
 
 ggplot(data = prep_gender_state, aes(x = year, y = pr_ep_users, fill = sex)) +
   geom_col(position = "dodge") +
