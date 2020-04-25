@@ -226,13 +226,13 @@ prep_f_state
 
 # Here I'll use the bind function to list the information ontop of eachother. I did not realize this earlier, but I cannot do this if I am grouping by state. If so, the values on the y axis are all wrong.
 
-prep_gender_state <- rbind(prep_f_state, prep_m_state) %>% 
+prep_gender <- rbind(prep_f_state, prep_m_state) %>% 
   group_by(year, sex) %>% 
   summarize(total_cases = sum(pr_ep_users))
 
 # this graph is based off the dataset above and should be working correctly now that I've removed state from the dataset.
 
-ggplot(data = prep_gender_state, aes(x = year, y = total_cases, fill = sex)) +
+ggplot(data = prep_gender, aes(x = year, y = total_cases, fill = sex)) +
   geom_col(position = "dodge") +
   labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
   theme_classic()+

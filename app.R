@@ -192,7 +192,8 @@ ui <- fluidPage(
                         # Here I add in a static plot to show rates of prep usage. I also add the fluid row.
                         
                         fluidRow(column(2), column(8,
-                                                   p("The key takeaway is that the majority of the users are men. In fact, in 2018 only about 6.6% of the 132333 users were women."),br(),
+                                                   p("The key takeaway is that the majority of the users are men. In fact, in 2018 only about 6.6% of the 132333 users were women."),
+                                                   br(),
                                                    
                                                    plotOutput("prepTotal", width = "100%", height = "100%"), br(),
                                                   
@@ -328,8 +329,7 @@ server <- function(input, output, session) {
     # Here I am creating the plotthat shows how PrEP has been used by genders on an annual basis.
      
      output$prepTotal <- renderPlot({
-         prep_gender_state %>% 
-         ggplot(aes(x = year, y = total_cases, fill = sex)) +
+       ggplot(data = prep_gender, aes(x = year, y = total_cases, fill = sex)) +
              geom_col(position = "dodge") +
              labs(title="PrEP Users by Gender", subtitle = "2012-2018",
                   x = "Year",
@@ -339,8 +339,8 @@ server <- function(input, output, session) {
          scale_fill_manual(values = wes_palette("Darjeeling2", n = 2)) +
          scale_x_continuous(
            breaks = seq(2012,2018,1),
-           label = c("2012", "2013", "2014", "2015", "2016","2017","2018")) +
-         scale_y_continuous()
+           label = c("2012", "2013", "2014", "2015", "2016","2017","2018"))
+       
      },
      height = 400,
      width = 700
