@@ -149,34 +149,6 @@ complete_costs <- direct_costs %>%
 complete_costs
 ```
 
-
-{r, PREP DATA_National, include = FALSE
-# Empty data set where I will store the files once they'e loaded in.
-prep_data_1 <- data.frame()
-
-# Listing out all the files in this particular folder. All of this data relates
-# to PrEP usage in the U.S..
-list <- list.files("Data_Sets/PrEP_Data")
-
-# Here I have the actual function which is picking up on every document that
-# ends in ".xlsx" in the "PrEP_Data" folder. The function reads in all of the
-# data, and then spits each one into the empty dataframe that I have created.
-# Each row is appended onto the preceding year's data.
-
-listxlsx <- dir(pattern = "*.xlsx")
-for (i in 1:length(list)){
-  print(list[i])
-  temp_data <- read_xlsx(paste("Data_Sets/PrEP_Data/",
-                               list[i], sep = ""),
-                         skip = 1) %>% 
-    clean_names()
-  
-  prep_data_1 = rbind(prep_data_1, temp_data)
-}
-
-prep_data_1
-
-
 ```{r Prep data state}
 prep_data_state <- data.frame()
 
@@ -268,14 +240,6 @@ ggplot(data = prep_gender_state, aes(x = year, y = total_cases, fill = sex)) +
   breaks = seq(2012,2018,1),
   label = c("2012", "2013", "2014", "2015", "2016","2017","2018"))
 
-ggplot(data = prep_gender_state, aes(x = year, y = pr_ep_users, fill = sex)) +
-  geom_col(position = "dodge") +
-  labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
-  theme_classic()+
-  scale_x_continuous(
-  breaks = seq(2012,2018,1),
-  label = c("2012", "2013", "2014", "2015", "2016","2017","2018"))
-
 ```
 
 ```{r prep_m_state with race}
@@ -285,16 +249,6 @@ prep_m_state_race <- prep_m_state %>%
   group_by(year) %>%
   summarise(pr_ep_users = sum(pr_ep_users))
 prep_m_state_race
-
-prep_f_state_race <- prep_f_state %>% 
-  group_by(year) %>%
-  summarise(pr_ep_users = sum(pr_ep_users))
-prep_f_state_race
-
-prep_f_state_race <- prep_gender_state %>% 
-  filter(year== 2018 & sex == "Male") %>% 
-  summarise(pr_ep_users = sum(pr_ep_users))
-prep_f_state_race
 
 
 # Here I am making a dataframe based off total male prep users. I assigned each user from 2018 with an ID number. From there, I applied the racial demographic estimates from the 2016 article that I cited. When I run a prop.table function, the percentages of users match up. I will use this frame to generate the liklihood of selecting a user who is of race x. Total values of races are included here: white = 1:84176, black = 14277, latino = 16571, asian = 5563, other = 2947.
@@ -315,14 +269,6 @@ prep_race_sample %>%
     x = "Race",
     y = "Count"
   )
-  
-
-y %>% 
-prep_race_sample %>% 
-  group_by(id)
-  mutate(is_white = (race== "White")) %>% 
-  summarize(num_white = sum(is_white)) %>% 
-  mutate(prop_white = num_white/123534)
 
 ``` 
 
