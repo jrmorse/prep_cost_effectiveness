@@ -25,6 +25,7 @@ library(htmltools)
 library(vembedr)
 library(wesanderson)
 library(infer)
+library(scales)
 ```
 
 My work so far: My data comes from a variety of sources that includes the CDC,
@@ -59,6 +60,7 @@ between 2012-2018.
 
 7. Then I read in, cleaned, and reformatted all CDC data for HIV and other
 relevant STIs.
+
 
 *Please see below for the tables I have created*
 
@@ -230,16 +232,6 @@ prep_gender <- rbind(prep_f_state, prep_m_state) %>%
   group_by(year, sex) %>% 
   summarize(total_cases = sum(pr_ep_users))
 
-# this graph is based off the dataset above and should be working correctly now that I've removed state from the dataset.
-
-ggplot(data = prep_gender, aes(x = year, y = total_cases, fill = sex)) +
-  geom_col(position = "dodge") +
-  labs(title="PrEP Users by Gender", subtitle = "2012-2018") +
-  theme_classic()+
-  scale_x_continuous(
-  breaks = seq(2012,2018,1),
-  label = c("2012", "2013", "2014", "2015", "2016","2017","2018"))
-
 ```
 
 ```{r prep_m_state with race}
@@ -250,7 +242,6 @@ prep_m_state_race <- prep_m_state %>%
   summarise(pr_ep_users = sum(pr_ep_users))
 prep_m_state_race
 
-
 # Here I am making a dataframe based off total male prep users. I assigned each user from 2018 with an ID number. From there, I applied the racial demographic estimates from the 2016 article that I cited. When I run a prop.table function, the percentages of users match up. I will use this frame to generate the liklihood of selecting a user who is of race x. Total values of races are included here: white = 1:84176, black = 14277, latino = 16571, asian = 5563, other = 2947.
 
 prep_race_sample <- data.frame(id = 1:123534) %>% 
@@ -258,39 +249,8 @@ prep_race_sample <- data.frame(id = 1:123534) %>%
                        ifelse(id %in% 84177:98454, "Black/ African American",
                               ifelse(id %in% 98455: 115026, "Hispanic/ Latino",
                                      ifelse(id %in% 115027: 120590, "Asian", "Unspecified")))))
-prep_race_sample %>% 
-  rep_sample_n(size = 5, replace = TRUE, reps = 1) %>% 
-  #select(race) %>% 
-  ggplot(aes(x = race)) +
-  geom_bar() +
-  theme_classic() + 
-  labs(
-    title = "Racial Charecteristics of Sample",
-    x = "Race",
-    y = "Count"
-  )
 
 ``` 
-
-
-```{r}
-# CHLAMYDIA AND GONORRHEA ONLY
-# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to
-# 2017. I still should rename the columns so that it is clear which values are
-# for which variable when I join the datasets. Also, for testing pursposes, I
-# have set this to only return the first ten rows as it is a large dataset.
-
-
-chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
-  skip = 5) %>% 
-  clean_names() 
-chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
-
-chlamydia_gonorrhea <- chlamydia_gonorrhea %>%
-  filter(!is.na(cases))
-chlamydia_gonorrhea
-
-```
 
 ```{r HIV DIAGNOSIS ONLY}
 # Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to
@@ -322,67 +282,52 @@ hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
 
 ```
 
-```{r HIV Cases by year Graph}
+```{r HIV Cases by year}
 # A table with hiv diagnoses by year for both sexes.
 
 hiv_aids_year <- hiv_aids_all %>% 
   group_by(year) %>%
   summarize(total_cases = sum(cases))
-
-# A plot that I have included in shiny. All diagnoses by year.
-
- hiv_total <- ggplot(hiv_aids_year, aes(x = year, y = total_cases)) +
-   geom_point() +
-   geom_text(aes(x = year, y = total_cases, label = total_cases),vjust = -1, nudge_y = .5) +
-   labs(title="HIV Diagnoses by Year", subtitle = "2007-2017") +
-   theme_classic() +
-   scale_x_continuous(
-     name = "Year",
-     breaks = seq(2007,2017,1),
-     label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
-   scale_y_continuous(
-     name = "New Diagnoses",
-     limits=c(35000, 50000))
-
 ```
 
-```{r HIV Diagnoses by Gender Graph}
-# A graph of HIV diagnoses by gender.
+```{r HIV Costs}
 
-ggplot(data = hiv_aids_all, aes(x = year, y = cases, fill = sex)) +
-  geom_col(position = "dodge") +
-  labs(title="HIV Diagnoses by Gender", subtitle = "2007-2017") +
-  theme_classic() +
-  scale_x_continuous(
-    name = "Year",
-    breaks = seq(2007,2017,1),
-    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
-  scale_y_continuous(
-    name = "New Diagnoses"
-  )
+hiv_cost <- hiv_aids_year %>% 
+  mutate(direct_costs = total_cases * 259997.01,
+         indirect_costs = total_cases * 1089414.34,
+         total_costs = direct_costs + indirect_costs) %>%
+  select(year, direct_costs, indirect_costs, total_costs) %>% 
+  gt() %>%
+  #data_color(
+   # columns = vars(direct_costs, indirect_costs, total_costs),
+    #colors = scales::col_numeric(
+    #  palette = paletteer::paletteer_d(
+      #  palette = "wesanderson::Zissou1"
+     # ) %>% as.character(),
+     # domain = NULL
+   # ),
+  #  alpha = 0.8
+ # ) %>% 
+  tab_header(
+    title = "HIV Associated Costs by Year",
+    subtitle= "Prices are in 2020 USD") %>%
+  cols_label(
+    year = "Year",
+    direct_costs = "Direct Costs",
+    indirect_costs = "Indirect Costs",
+    total_costs = "Total Costs")
+
+  fmt_currency(hiv_cost, 2:4)
 ```
+
 
 ```{r HIV Diagnoses Transmission Category table}
+# Table of HIV rates by transmission category
+
 hiv_aids_transmission <- hiv_aids_all %>% 
   group_by(transmission_category, year, sex) %>%
   summarize(total_cases = sum(cases))
 hiv_aids_transmission
-```
-
-```{r HIV Diagnosis by transmission category}
-ggplot(data = hiv_aids_transmission, aes(x = year, y = total_cases, fill = transmission_category)) +
-  geom_col(position = "dodge") +
-  labs(title="HIV Diagnosis by Category", subtitle = "2007-2017") +
-  theme_classic() +
-  # scale_fill_manual(values = wes_palette(name="Darjeeling2", n=5)) +
-  scale_x_continuous(
-    name = "Year",
-    breaks = seq(2007,2017,2),
-    label = c("2007", "2009", "2011","2013","2015","2017")) +
-  scale_y_continuous(
-    name = "New Diagnoses"
-  ) +
-  labs(fill = "Transmission Category")
 ```
 
 
@@ -391,19 +336,6 @@ hiv_aids_maletomalesexualcontact <- hiv_aids_all %>%
   filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
   group_by(year, race_ethnicity) %>%
   summarize(total_cases = sum(cases))
-
-ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases, fill = race_ethnicity)) +
-  geom_col(position = "dodge") +
-  facet_wrap(~ race_ethnicity) +
-  labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
-  theme_classic() +
-  scale_x_continuous(
-    name = "Year",
-    breaks = seq(2007,2017,1),
-    label = c("2007", "2008", "2009", "2010", "2011","2012","2013","2014","2015","2016","2017")) +
-  scale_y_continuous(
-    name = "New Diagnoses"
-  )
 ```
 
 
@@ -411,12 +343,121 @@ ggplot(data = hiv_aids_maletomalesexualcontact, aes(x = year, y = total_cases, f
 # SYPHILIS ONLY
 # Here I read in all the CDC data for both early latent and congential syphilis
 # rates from 2008 to 2017. I still should rename the columns so that it is clear
-# which values are for which variable when I join the datasets.
+# which values are for which variable when I join the datasets. Unclear if I will use this data or not. There is no racial component and cases are lower.
 
 syphilis <- read_xlsx("Data_Sets/CDC_Data/Atlas_Congenital&EarlyLatentSyphilis.xlsx",
   skip = 7) %>% 
   clean_names()
+
 syphilis[syphilis == "Data not available"] <-NA
 
+syphilis <-  syphilis%>% 
+filter(!is.na(cases)) %>% 
+  select(indicator, year, cases)
+
+y <- as.numeric(syphilis$cases)
+
+# Adding this column back to the data set.
+
+z <- syphilis %>% 
+  mutate(case_numeric = y) %>% 
+  group_by(indicator)
+
+
+ggplot(z, aes(x = year, y = case_numeric)) +geom_col()
 ```
+
+```{r}
+# CHLAMYDIA AND GONORRHEA ONLY
+# Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to
+# 2017. I still should rename the columns so that it is clear which values are
+# for which variable when I join the datasets. Also, for testing pursposes, I
+# have set this to only return the first ten rows as it is a large dataset.
+
+
+chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
+  skip = 5) %>% 
+  clean_names() 
+chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
+
+chlamydia_gonorrhea <- chlamydia_gonorrhea %>%
+  filter(!is.na(cases))
+
+cases_numeric <- as.numeric(chlamydia_gonorrhea$cases) 
+rates_numeric <- as.numeric(chlamydia_gonorrhea$rate_per_100000)
+
+# master clean version
+
+chlamydia_gonorrhea_numeric <- chlamydia_gonorrhea %>% 
+  mutate(cases_numeric = cases_numeric,
+         rates_numeric = rates_numeric) %>% 
+  select(indicator, year, race_ethnicity,sex, age_group, cases_numeric, rates_numeric)
+
+# total cases by year graph
+
+chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>% 
+  group_by(indicator, year) %>% 
+  summarise(total_cases = sum(cases_numeric)) %>% 
+  ggplot(aes(x = year, y = total_cases, color = indicator)) + 
+  geom_line() +
+  theme_classic() +
+  labs(title = "Total cases of Chlamydia and Gonorrhea",
+       subtitle = "2013 - 2017",
+       x = "Year",
+       y = "Total Cases") +
+  annotate("text", x= 2014, y = 1300000, label="Chlamydia")+
+  annotate("text", x= 2014, y= 400000, label="Gonorrhea")
+
+# consideration by race
+chlamydia_gonorrhea_numeric %>% 
+  group_by(indicator, year, race_ethnicity) %>% 
+  filter(indicator == "Chlamydia") %>% 
+  summarise(total_cases = sum(cases_numeric),
+            rates = mean(rates_numeric)) %>% 
+ggplot(aes(x = year, y = total_cases, color = race_ethnicity)) + 
+  geom_line() +
+  theme_classic() +
+  labs(title = "Rates of Chlamydia",
+       subtitle = "2013 - 2017",
+       x = "Year",
+       y = "Total Cases")
+
+chlamydia_gonorrhea_numeric2 <- chlamydia_gonorrhea_numeric %>% 
+  mutate(cases_numeric = cases_numeric,
+         rates_numeric = rates_numeric) %>% 
+  select(indicator, year, race_ethnicity,sex, age_group, cases_numeric, rates_numeric) %>% 
+  group_by(indicator, race_ethnicity, sex, year) %>% 
+  filter(race_ethnicity %in% c("Black/African American", "White", "Asian", "Hispanic/Latino")) %>% 
+  filter(sex == "Male") %>% 
+  summarise(total_cases = sum(cases_numeric)) %>% 
+  arrange(desc(total_cases))
+
+ggplot(chlamydia_gonorrhea_numeric2, aes(x =year, y = total_cases, fill = race_ethnicity)) + 
+  geom_point()
+  
+```
+
+```{r}
+# Think i will ignore this and do syphillis separately
+
+sti_join <- chlamydia_gonorrhea %>% 
+  select(indicator, year, cases) %>% 
+  rbind(., syphilis)
+
+# Converting cases to numbers. 
+x <- as.numeric(sti_join$cases)
+
+# Adding this column back to the data set.
+
+sti_join <- sti_join %>% 
+  mutate(case_numeric = x) %>% 
+  group_by(indicator, year) %>%
+  summarize(total_cases = sum(case_numeric))
+
+
+```
+
+
+
+
 

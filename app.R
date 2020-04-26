@@ -18,6 +18,8 @@ library(htmltools)
 library(vembedr)
 library(wesanderson)
 library(infer)
+library(gt)
+library(scales)
 
 # Need to load in the appropriate data
 
@@ -90,9 +92,9 @@ ui <- fluidPage(
                                                    
                                                    tabPanel("HIV",
                                                             
-                                                            tags$head(
-                                                              tags$style(HTML("hr {border-top: 1px solid #000000;}"))
-                                                            ),
+                                                          #  tags$head(
+                                                           #   tags$style(HTML("hr {border-top: 1px solid #000000;}"))
+                                                          #  ),
                                                             
                                                             # Here I load the cover photo.
                                                             
@@ -100,7 +102,7 @@ ui <- fluidPage(
                                                             
                                                             # Here is the title for the HIV page
                                                             
-                                                            h1(tags$b("Who is being diagnosed?"), align = "center"), br(),
+                                                            h1(tags$b("Who is being diagnosed?"), align = "center"),
                                                             
                                                             hr(),
                                                             
@@ -174,14 +176,9 @@ ui <- fluidPage(
                
                tabPanel("PrEP",
                         
-                        tags$head(
-                          tags$style(HTML("hr {border-top: 1px solid #000000;}"))
-                        ),
-                        
                         #Setting a cover photo for the page.
                         
                         imageOutput("medicine2", width = "100%", height = "100%"),
-                        br(),
                         
                         # Title for the page
                         
@@ -207,6 +204,60 @@ ui <- fluidPage(
                                                    )
                                  )
                         ),
+               
+               # Here I make the page that will discuss the costs of such STIs and HIV.
+               tabPanel("Costs",
+                        
+                        # Setting cover photo for the page
+                        
+                        imageOutput("costs", width = "100%", height = "100%"),
+                        br(),
+                        
+                        h1(tags$b("Associated Costs"), align = "center"), 
+                        
+                        hr(), 
+                        
+                        # Here I add in a static plot to show rates of prep usage. I also add the fluid row.
+                        
+                        fluidRow(column(2), column(8,
+                                                   p("With all of these diagnoses, one may wonder how much it costs society. While
+there are several frameworks once can use to consider the cost of HIV, for our
+purposes, the most relevant is that of indirect and direct costs."), br(),
+                                                   p("Direct cost
+refers to the money spent on the individual for specific illness related care.
+Indirect cost is a bit more abstract. Rather than being a simple value such as
+the cost to fill a perscription, indirect costs relate to lost productivity.
+Another way to think of indirect costs is as the cost to society."),
+                                                   br(),
+                                                   
+                                                   # Here I add in a button that I will use to generate a histogram showing the race of male users.
+                                                   
+                                                   sidebarPanel(
+                                                     
+                                                     # A short description of the options.
+                                                     
+                                                     p(tags$em("Select a year from the list below to view the total associated costs of HIV.")),
+                                                     
+                                                     selectInput("yearInput", "Year", c("2008",
+                                                                                        "2009",
+                                                                                        "2010",
+                                                                                        "2011",
+                                                                                        "2012",
+                                                                                        "2013",
+                                                                                        "2014",
+                                                                                        "2015",
+                                                                                        "2016",
+                                                                                        "2017"), multiple = FALSE)
+                                                     ),
+                                                   mainPanel(
+                                                     # I add this in because if not there is an error that one or more values is needed for faceting.
+                                                     
+                                                     gt_output('table')
+                                                     )
+                                                   )
+                                 )
+                        ),
+                        
                
                # This is my about page. I set up the same columns with fluid rows so that it matches other pages.
                tabPanel("About",
@@ -369,6 +420,36 @@ server <- function(input, output, session) {
            y = "Count"
          )
        
+     })
+     
+     output$costs <- renderImage({
+       # Return a list containing the filename and alt text
+       list(src = './graphics/healthcaremoney.jpg',
+            height = 450,
+            width = 800, style="display: block; margin-left: auto; margin-right: auto;")
+     }, deleteFile = FALSE
+     )
+     
+     output$table <- render_gt({
+       
+       filtered3 <-
+         hiv_aids_year %>% 
+         filter(year == input$yearInput)
+       
+       filtered3 %>% 
+         mutate(direct_costs = total_cases * 259997.01,
+                indirect_costs = total_cases * 1089414.34,
+                total_costs = direct_costs + indirect_costs) %>%
+         select(direct_costs, indirect_costs, total_costs) %>% 
+        gt() %>% 
+        tab_header(
+          title = "HIV Associated Costs by Year",
+          subtitle= "Prices are in 2020 USD") %>% 
+         cols_label(
+           direct_costs = "Direct Costs",
+           indirect_costs = "Indirect Costs",
+           total_costs = "Total Costs") %>% 
+         fmt_currency(., 1:3)
      })
      
      # Here I load in the about page of my project. It is an HTML document.
