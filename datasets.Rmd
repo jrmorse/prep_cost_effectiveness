@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r, include = FALSE}
 library(readxl)
 library(janitor)
-library(tidyverse)
 library(gt)
 library(rvest)
 library(reprex)
@@ -26,6 +25,7 @@ library(vembedr)
 library(wesanderson)
 library(infer)
 library(scales)
+library(tidyverse)
 ```
 
 My work so far: My data comes from a variety of sources that includes the CDC,
@@ -60,7 +60,6 @@ between 2012-2018.
 
 7. Then I read in, cleaned, and reformatted all CDC data for HIV and other
 relevant STIs.
-
 
 *Please see below for the tables I have created*
 
@@ -101,6 +100,8 @@ costs_clean <- table_costs_messy %>%
   select("parameter", "sex", "cost_2020")
 
 costs_clean
+
+write_csv(costs_clean, "csv/cost_clean.csv")
 
 # This table does not differentiate between indirect and direct costs as the
 # dataset has indirect costs listed as a separate that is embedded in the data.
@@ -298,16 +299,6 @@ hiv_cost <- hiv_aids_year %>%
          total_costs = direct_costs + indirect_costs) %>%
   select(year, direct_costs, indirect_costs, total_costs) %>% 
   gt() %>%
-  #data_color(
-   # columns = vars(direct_costs, indirect_costs, total_costs),
-    #colors = scales::col_numeric(
-    #  palette = paletteer::paletteer_d(
-      #  palette = "wesanderson::Zissou1"
-     # ) %>% as.character(),
-     # domain = NULL
-   # ),
-  #  alpha = 0.8
- # ) %>% 
   tab_header(
     title = "HIV Associated Costs by Year",
     subtitle= "Prices are in 2020 USD") %>%
@@ -318,6 +309,30 @@ hiv_cost <- hiv_aids_year %>%
     total_costs = "Total Costs")
 
   fmt_currency(hiv_cost, 2:4)
+```
+
+```{r}
+hiv_aids_all %>% 
+  filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
+  group_by(year, race_ethnicity) %>%
+  summarize(total_cases = sum(cases)) %>% 
+  mutate(direct_costs = total_cases * 259997.01,
+                indirect_costs = total_cases * 1089414.34,
+                total_costs = direct_costs + indirect_costs) %>%
+  select(year, direct_costs, indirect_costs, total_costs) %>%
+  ungroup(year) %>% 
+         gt() %>% 
+
+         tab_header(
+           title = "HIV Associated Costs by Year",
+           subtitle= "Prices are in 2020 USD") %>% 
+         cols_label(
+           direct_costs = "Direct Costs",
+           indirect_costs = "Indirect Costs",
+           total_costs = "Total Costs") %>% 
+         fmt_currency(., 2:4) %>% 
+    fmt_number(.,2:4, decimals = 0)
+
 ```
 
 
@@ -375,7 +390,7 @@ ggplot(z, aes(x = year, y = case_numeric)) +geom_col()
 # have set this to only return the first ten rows as it is a large dataset.
 
 
-chlamydia_gonorrhea <-read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
+chlamydia_gonorrhea <- read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
   clean_names() 
 chlamydia_gonorrhea[chlamydia_gonorrhea == "Data not available"] <-NA
@@ -396,8 +411,23 @@ chlamydia_gonorrhea_numeric <- chlamydia_gonorrhea %>%
 # total cases by year graph
 
 chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>% 
-  group_by(indicator, year) %>% 
-  summarise(total_cases = sum(cases_numeric)) %>% 
+  group_by(indicator, year, sex) %>% 
+  summarise(total_cases = sum(cases_numeric))
+
+chlamydia_gonorrea_total %>% 
+  group_by(indicator, year, sex) %>% 
+  mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
+                               ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 449.33,
+                                       ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 34.06,
+                                              ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))))
+                            
+                                
+              #  indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 259997.01, total_cases * 259997.01)
+               # total_costs = direct_costs + indirect_costs)
+
+```
+
+
   ggplot(aes(x = year, y = total_cases, color = indicator)) + 
   geom_line() +
   theme_classic() +

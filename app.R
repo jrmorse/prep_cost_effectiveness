@@ -7,11 +7,10 @@
 #    http://shiny.rstudio.com/
 #
 
+
 # Here I load the libraries
 
 library(shiny)
-library(tidyverse)
-library(usmap)
 library(shinythemes)
 library(ggcorrplot)
 library(htmltools)
@@ -20,8 +19,12 @@ library(wesanderson)
 library(infer)
 library(gt)
 library(scales)
+library(readr)
+
 
 # Need to load in the appropriate data
+
+cost_clean <- read_csv("csv/cost_clean.csv")
 
 #
 ui <- fluidPage(
@@ -206,6 +209,7 @@ ui <- fluidPage(
                         ),
                
                # Here I make the page that will discuss the costs of such STIs and HIV.
+               
                tabPanel("Costs",
                         
                         # Setting cover photo for the page
@@ -217,8 +221,6 @@ ui <- fluidPage(
                         
                         hr(), 
                         
-                        # Here I add in a static plot to show rates of prep usage. I also add the fluid row.
-                        
                         fluidRow(column(2), column(8,
                                                    p("With all of these diagnoses, one may wonder how much it costs society. While
 there are several frameworks once can use to consider the cost of HIV, for our
@@ -229,8 +231,6 @@ Indirect cost is a bit more abstract. Rather than being a simple value such as
 the cost to fill a perscription, indirect costs relate to lost productivity.
 Another way to think of indirect costs is as the cost to society."),
                                                    br(),
-                                                   
-                                                   # Here I add in a button that I will use to generate a histogram showing the race of male users.
                                                    
                                                    sidebarPanel(
                                                      
@@ -252,10 +252,71 @@ Another way to think of indirect costs is as the cost to society."),
                                                    mainPanel(
                                                      # I add this in because if not there is an error that one or more values is needed for faceting.
                                                      
-                                                     gt_output('table')
+                                                     br(), gt_output('table'), br(), br(), br()
                                                      )
                                                    )
+                                 ),
+                        fluidRow(column(2), column(8,
+                                                   
+                                                   p("While these numbers are staggering. You'll notice that the associated costs are
+trending downwards. This is what we would expect to see as new diagnoses has
+been generally decreasing since 2008. It is important to remember, however, that
+these costs are not decreasing for everyone."),br(),
+                                                   p("As we've seen, for men who have sex with men, these diagnoses are relatively
+static. What's more, these men who are not white are facing an increasing
+financial burden over the last 10 years. Take a look at the direct costs for different racial
+                                                     demographics of men who have sex with men below."),
+                                                   
+                                                   br(),
+                                                   
+                                                   sidebarPanel(
+                                                     
+                                                     # A short description of the options.
+                                                     
+                                                     p(tags$em("Select a demographic from the list below to view the total associated costs of HIV for your selected group.")),
+                                                    
+                                                     selectInput("race2Input", "Race", c("Black/African American",
+                                                                                                       "White",
+                                                                                                       "Hispanic/Latino",
+                                                                                                       "Asian"), multiple = FALSE)
+                                                   ),
+                                                   mainPanel(
+                                                     # I add this in because if not there is an error that one or more values is needed for faceting.
+                                                     
+                                                     br(), gt_output('table2'), br(), br()
+                                                   )
+                                                   
                                  )
+                        ),
+                        fluidRow(column(2), column(8,
+                                                   
+                                                   p("Interested to see how these costs compare to other STIs? In the table below, I've compiled costs of two of the most prevalant STIs in the United States: Chlamydia and Gonorreah."),br(),
+                                                   p("As we've seen, for men who have sex with men, these diagnoses are relatively
+static. What's more, these men who are not white are facing an increasing
+financial burden over the last 10 years. Take a look at the direct costs for different racial
+                                                     demographics of men who have sex with men below."),
+                                                   
+                                                   br(),
+                                                   
+                                                   sidebarPanel(
+                                                     
+                                                     # A short description of the options.
+                                                     
+                                                     p(tags$em("Select a demographic from the list below to view the total associated costs of HIV for your selected group.")),
+                                                     
+                                                     selectInput("stiInput", "STI", c("Chlamydia",
+                                                                                         "Gonorrhea",
+                                                                                         "Early Latent ",
+                                                                                         "Asian"), multiple = FALSE)
+                                                   ),
+                                                   mainPanel(
+                                                     # I add this in because if not there is an error that one or more values is needed for faceting.
+                                                     
+                                                     br(), gt_output('table3'), br(), br()
+                                                   )
+                                                   
+                        )
+                        )
                         ),
                         
                
@@ -430,6 +491,8 @@ server <- function(input, output, session) {
      }, deleteFile = FALSE
      )
      
+     # First table of the fourth page. All associated costs for all diagnoses.
+     
      output$table <- render_gt({
        
        filtered3 <-
@@ -449,7 +512,49 @@ server <- function(input, output, session) {
            direct_costs = "Direct Costs",
            indirect_costs = "Indirect Costs",
            total_costs = "Total Costs") %>% 
-         fmt_currency(., 1:3)
+         fmt_currency(., 1:3) %>% 
+         fmt_number(.,1:3, decimals = 0)
+     })
+     
+     # Second table of the fourth page. Associated costs by race for msm.
+     
+     output$table2 <- render_gt({
+       
+       filtered4 <-
+         hiv_aids_all %>% 
+         filter(race_ethnicity == input$race2Input,
+                transmission_category == "Male-to-male sexual contact")
+       
+       filtered4 %>% 
+         group_by(year) %>%
+         summarize(total_cases = sum(cases)) %>% 
+         mutate(direct_costs = total_cases * 259997.01,
+                indirect_costs = total_cases * 1089414.34,
+                total_costs = direct_costs + indirect_costs) %>%
+         select(year, direct_costs, indirect_costs, total_costs) %>%
+         ungroup(year) %>% 
+         gt() %>% 
+         #data_color(
+          # columns = vars(direct_costs, indirect_costs, total_costs),
+          # colors = scales::col_numeric(
+           #  palette = paletteer::paletteer_d(
+           #    palette = "ggsci::red_material"
+           #  ) %>% as.character(),
+           #  domain = NULL
+          # ),
+          # alpha = 0.8
+        # ) %>% 
+         tab_header(
+           title = "HIV Associated Costs by Year",
+           subtitle= "Prices are in 2020 USD") %>% 
+         cols_label(
+           year = "Year",
+           direct_costs = "Direct Costs",
+           indirect_costs = "Indirect Costs",
+           total_costs = "Total Costs") %>% 
+         fmt_currency(., 2:4) %>% 
+         fmt_number(.,2:4, decimals = 0)
+       
      })
      
      # Here I load in the about page of my project. It is an HTML document.
