@@ -12,15 +12,22 @@
 
 library(shiny)
 library(shinythemes)
+library(readxl)
+library(janitor)
+library(gt)
+library(rvest)
+library(reprex)
+library(fivethirtyeight)
+library(stringr)
+library(usmap)
+library(shinythemes)
 library(ggcorrplot)
 library(htmltools)
 library(vembedr)
 library(wesanderson)
 library(infer)
-library(gt)
 library(scales)
-library(readr)
-
+library(tidyverse)
 
 # Need to load in the appropriate data
 
@@ -291,29 +298,22 @@ financial burden over the last 10 years. Take a look at the direct costs for dif
                         fluidRow(column(2), column(8,
                                                    
                                                    p("Interested to see how these costs compare to other STIs? In the table below, I've compiled costs of two of the most prevalant STIs in the United States: Chlamydia and Gonorreah."),br(),
-                                                   p("As we've seen, for men who have sex with men, these diagnoses are relatively
-static. What's more, these men who are not white are facing an increasing
-financial burden over the last 10 years. Take a look at the direct costs for different racial
-                                                     demographics of men who have sex with men below."),
-                                                   
-                                                   br(),
                                                    
                                                    sidebarPanel(
                                                      
                                                      # A short description of the options.
                                                      
-                                                     p(tags$em("Select a demographic from the list below to view the total associated costs of HIV for your selected group.")),
+                                                     p(tags$em("Select one of the two STIs from the options below")),
                                                      
                                                      selectInput("stiInput", "STI", c("Chlamydia",
-                                                                                         "Gonorrhea",
-                                                                                         "Early Latent ",
-                                                                                         "Asian"), multiple = FALSE)
+                                                                                         "Gonorrhea"), multiple = FALSE)
                                                    ),
                                                    mainPanel(
-                                                     # I add this in because if not there is an error that one or more values is needed for faceting.
-                                                     
+                                                    
                                                      br(), gt_output('table3'), br(), br()
-                                                   )
+                                                   ),
+                                                   
+                                                   p("You may notice that the costs of these other STIs do not come close to the costs incurred to both the individual and to society with HIV."),
                                                    
                         )
                         )
@@ -552,8 +552,44 @@ server <- function(input, output, session) {
            direct_costs = "Direct Costs",
            indirect_costs = "Indirect Costs",
            total_costs = "Total Costs") %>% 
+         data_color(2:4, "Reds") %>% 
          fmt_currency(., 2:4) %>% 
          fmt_number(.,2:4, decimals = 0)
+       
+     })
+     
+     output$table3 <- render_gt({
+       
+       filtered5 <-
+         chlamydia_gonorrea_total %>% 
+         filter(indicator == input$stiInput)
+       
+       filtered5 %>% 
+         group_by(indicator, year, sex) %>% 
+         mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
+                                      ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 449.33,
+                                             ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 34.06,
+                                                    ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))),
+                indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 61.57, 
+                                        ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 61.57,
+                                               ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 13.10	,
+                                                      ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 13.10, 0)))),
+                total_costs = direct_costs + indirect_costs) %>%
+         ungroup(indicator, sex, year) %>% 
+         select(year, sex, direct_costs, indirect_costs, total_costs) %>%
+         gt() %>% 
+         tab_header(
+           title = "STI Associated Costs by Year",
+           subtitle= "Prices are in 2020 USD") %>% 
+         cols_label(
+           year = "Year",
+           sex = "Sex",
+           direct_costs = "Direct Costs",
+           indirect_costs = "Indirect Costs",
+           total_costs = "Total Costs") %>% 
+         data_color(3:5, "Reds") %>% 
+         fmt_currency(., 3:5) %>% 
+        fmt_number(.,3:5, decimals = 0)
        
      })
      

@@ -419,12 +419,30 @@ chlamydia_gonorrea_total %>%
   mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
                                ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 449.33,
                                        ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 34.06,
-                                              ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))))
+                                              ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))),
+         indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 61.57, 
+                               ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 61.57,
+                                       ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 13.10	,
+                                              ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 13.10, 0)))),
+         total_costs = direct_costs + indirect_costs) %>%
+  select(indicator, year, sex, direct_costs, indirect_costs, total_costs) %>%
+  ungroup(indicator, sex, year) %>% 
+         gt() %>% 
+  tab_header(
+           title = "STI Associated Costs by Year",
+           subtitle= "Prices are in 2020 USD") %>% 
+         cols_label(
+           indicator = "Indicator",
+           year = "Year",
+           sex = "Sex",
+           direct_costs = "Direct Costs",
+           indirect_costs = "Indirect Costs",
+           total_costs = "Total Costs") %>%
+  fmt_currency(., 4:6) %>% 
+  fmt_number(.,4:6, decimals = 0)
                             
                                 
-              #  indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 259997.01, total_cases * 259997.01)
-               # total_costs = direct_costs + indirect_costs)
-
+      
 ```
 
 
