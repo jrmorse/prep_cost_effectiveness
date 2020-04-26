@@ -108,6 +108,8 @@ write_csv(costs_clean, "csv/cost_clean.csv")
 # In the following r blocks I will separate out the indirectand direct costs so
 # that I can be more specific.
 ```
+
+
 ```{r DIRECT COSTS FOR HIV & STIS}
 
 # This is the data that is just focused on direct medical costs.
@@ -117,11 +119,7 @@ direct_costs <-
   slice(1:10)
 colnames(direct_costs)[3] <- "direct_cost_2020"
 
-direct_costs
-```
-
-
-```{r INDIRECT COSTS HIV & STIS}
+#INDIRECT COSTS HIV & STIS
 
 # This is the data that is concerned with the indirect costs of HIV
 
@@ -141,16 +139,20 @@ colnames(indirect_costs)[3] <- "indirect_cost_2020"
 
 indirect_costs
 
-```
-```{r INDIRECT & DIRECT COSTS}
- # this is what I will use as a reference.
+# INDIRECT & DIRECT COSTS
+
+# this is what I will use as a reference.
 
 complete_costs <- direct_costs %>% 
   full_join(indirect_costs, direct_costs, by = c("parameter"= "parameter","sex"="sex")) %>% 
   mutate(total_cost = direct_cost_2020 + indirect_cost_2020)
 
 complete_costs
+
+#to load
+write_csv(complete_costs, "csv/complete_costs.csv")
 ```
+
 
 ```{r Prep data state}
 prep_data_state <- data.frame()
@@ -175,11 +177,7 @@ for (i in 1:length(list)){
   prep_data_state = rbind(prep_data_state, temp_data)
 }
 
-prep_data_state
-
-```
-
-```{r prep racial estimation}
+# prep racial estimation
 # this is 2016 data.
 # I think I will assume these rates as constant and see how it might explain different trends by race. Is there some way I can hold other variables constant?
 
@@ -209,7 +207,9 @@ prep_race <- prep_race %>%
          proportion = total / sum(total)) %>% 
 select(race, proportion)
 
-prep_race
+# to load
+
+write_csv(prep_race, "csv/prep_race.csv")
 ```
 
 ```{r PrEP growth rates for men and women_state}
@@ -233,6 +233,9 @@ prep_gender <- rbind(prep_f_state, prep_m_state) %>%
   group_by(year, sex) %>% 
   summarize(total_cases = sum(pr_ep_users))
 
+#to load
+
+write_csv(prep_gender, "csv/prep_gender.csv")
 ```
 
 ```{r prep_m_state with race}
@@ -251,6 +254,9 @@ prep_race_sample <- data.frame(id = 1:123534) %>%
                               ifelse(id %in% 98455: 115026, "Hispanic/ Latino",
                                      ifelse(id %in% 115027: 120590, "Asian", "Unspecified")))))
 
+# to load
+
+write_csv(prep_race_sample, "csv/prep_race_sample.csv")
 ``` 
 
 ```{r HIV DIAGNOSIS ONLY}
@@ -281,6 +287,9 @@ hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
 hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
   filter(indicator == "HIV diagnoses")
 
+# to load
+
+write_csv(hiv_aids_all, "csv/hiv_aids_all.csv")
 ```
 
 ```{r HIV Cases by year}
@@ -289,6 +298,10 @@ hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
 hiv_aids_year <- hiv_aids_all %>% 
   group_by(year) %>%
   summarize(total_cases = sum(cases))
+
+# to load
+
+write_csv(hiv_aids_year, "csv/hiv_aids_year.csv")
 ```
 
 ```{r HIV Costs}
@@ -351,6 +364,8 @@ hiv_aids_maletomalesexualcontact <- hiv_aids_all %>%
   filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
   group_by(year, race_ethnicity) %>%
   summarize(total_cases = sum(cases))
+
+write_csv(hiv_aids_maletomalesexualcontact,"csv/hiv_aids_maletomalesexualcontact.csv")
 ```
 
 
@@ -414,6 +429,12 @@ chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>%
   group_by(indicator, year, sex) %>% 
   summarise(total_cases = sum(cases_numeric))
 
+# to load
+
+write_csv(chlamydia_gonorrea_total,"csv/chlamydia_gonorrea_total.csv")
+
+# Can be deleted
+
 chlamydia_gonorrea_total %>% 
   group_by(indicator, year, sex) %>% 
   mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
@@ -445,45 +466,6 @@ chlamydia_gonorrea_total %>%
       
 ```
 
-
-  ggplot(aes(x = year, y = total_cases, color = indicator)) + 
-  geom_line() +
-  theme_classic() +
-  labs(title = "Total cases of Chlamydia and Gonorrhea",
-       subtitle = "2013 - 2017",
-       x = "Year",
-       y = "Total Cases") +
-  annotate("text", x= 2014, y = 1300000, label="Chlamydia")+
-  annotate("text", x= 2014, y= 400000, label="Gonorrhea")
-
-# consideration by race
-chlamydia_gonorrhea_numeric %>% 
-  group_by(indicator, year, race_ethnicity) %>% 
-  filter(indicator == "Chlamydia") %>% 
-  summarise(total_cases = sum(cases_numeric),
-            rates = mean(rates_numeric)) %>% 
-ggplot(aes(x = year, y = total_cases, color = race_ethnicity)) + 
-  geom_line() +
-  theme_classic() +
-  labs(title = "Rates of Chlamydia",
-       subtitle = "2013 - 2017",
-       x = "Year",
-       y = "Total Cases")
-
-chlamydia_gonorrhea_numeric2 <- chlamydia_gonorrhea_numeric %>% 
-  mutate(cases_numeric = cases_numeric,
-         rates_numeric = rates_numeric) %>% 
-  select(indicator, year, race_ethnicity,sex, age_group, cases_numeric, rates_numeric) %>% 
-  group_by(indicator, race_ethnicity, sex, year) %>% 
-  filter(race_ethnicity %in% c("Black/African American", "White", "Asian", "Hispanic/Latino")) %>% 
-  filter(sex == "Male") %>% 
-  summarise(total_cases = sum(cases_numeric)) %>% 
-  arrange(desc(total_cases))
-
-ggplot(chlamydia_gonorrhea_numeric2, aes(x =year, y = total_cases, fill = race_ethnicity)) + 
-  geom_point()
-  
-```
 
 ```{r}
 # Think i will ignore this and do syphillis separately

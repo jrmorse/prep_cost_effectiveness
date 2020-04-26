@@ -1,0 +1,11 @@
+parameter,sex,direct_cost_2020,indirect_cost_2020,total_cost
+Average cost per case of chlamydia,F,412.65000000000003,61.57,474.22
+Average cost per case of chlamydia,M,34.06,13.100000000000001,47.160000000000004
+Average cost per case of gonorrhea,F,449.33000000000004,61.57,510.90000000000003
+Average cost per case of gonorrhea,M,89.08,13.100000000000001,102.18
+Average cost per case of syphilis,F,749.32,146.72,896.0400000000001
+Average cost per case of syphilis,M,749.32,146.72,896.0400000000001
+Average cost per case of HIV,F,259997.01,1089414.34,1349411.35
+Average cost per case of HIV,M,259997.01,1089414.34,1349411.35
+Average cost per case of congenital syphilis,F,8826.78,79151.51000000001,87978.29000000001
+Average cost per case of congenital syphilis,M,8826.78,79151.51000000001,87978.29000000001

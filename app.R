@@ -31,7 +31,15 @@ library(tidyverse)
 
 # Need to load in the appropriate data
 
-cost_clean <- read_csv("csv/cost_clean.csv")
+
+complete_costs <- read_csv("csv/complete_costs.csv")
+prep_race <- read_csv("csv/prep_race.csv")
+prep_gender <- read_csv("csv/prep_gender.csv")
+prep_race_sample <- read_csv("csv/prep_race_sample.csv")
+hiv_aids_all <- read_csv("csv/hiv_aids_all.csv")
+hiv_aids_all <- read_csv("csv/hiv_aids_year.csv")
+hiv_aids_maletomalesexualcontact <- read_csv("csv/hiv_aids_maletomalesexualcontact.csv")
+chlamydia_gonorrea_total<- read_csv("csv/chlamydia_gonorrea_total.csv")
 
 #
 ui <- fluidPage(
