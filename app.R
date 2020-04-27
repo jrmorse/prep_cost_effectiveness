@@ -80,39 +80,41 @@ ui <- fluidPage(
                                                    the United States witnessed the approval of a new drug that was able to prevent
                                                    the onset of HIV for at risk individuals. With, Pre-Exposure Prophylaxis (PrEP)
                                                    medication, high risk individuals have been able to live without contracting
-                                                   HIV, thus saving millions of dollars each year for the U.S. healthcare system.
-                                                   Accompanying this progress, however, is a spike in the prevalence of many other
-                                                   sexually transmitted illnesses (STIs). With this increase in STI prevalence,
-                                                   financial resources must be directed towards treatment. In my study, I aim to
-                                                   link the advent of PrEP in the United States to this increased observation of
-                                                   STIs, before discerning the cost efficiency of PrEP and its’ impact on the
-                                                   United States’ healthcare system."), br(),
+                                                   HIV, thus saving millions of dollars each year for the U.S. healthcare system."), br(),
                                                   
-                                                   p("Additionally, I have pulled in data regarding the estimated costs for all STIs
-                                                   which include the direct medical costs of HIV. With this information, we can see
-                                                   if the decreased numbers of HIV has saved the U.S. healthcare money, or if the
-                                                   extra resources devoted towards STI treatment has surpassed any potential
-                                                   savings. This type of analysis  will make it possible to consider if PrEP has
-                                                   been a financially effective treatment in the eyes of the U.S. health system."),
+                                                   p(" Throughout this application, we will take a look at the state of HIV today.
+                                                   We will learn where we have been successful at combatting the disease and where
+                                                   we still have work to do."),
                                                    br(), 
                                                    
-                                                   p("The first piece of data to consider is the general downward trend in HIV diagnoses as is shown below:"), br(),
+                                                   h3(tags$b("At a glance...")),
+                                                   
+                                                   p("The first piece of data to consider is the general downward trend in HIV diagnoses
+                                                     as is shown below:"), br(),
                                                    
                                                    # Here I load a graph to show the decrease in HIV diagnosis.
                                                   
                                                    plotOutput("hivTotal", width = "100%", height = "100%"), br(),
                                                    
-                                                   p("As you will see in the coming sections of this app, this observed downward trend may not tell the whole story..."), br()
+                                                   p("As you will see in the coming sections of this app, this observed downward trend may 
+                                                     not tell the whole story..."), br(),
+                                                   
+                                                   h3(tags$b("Why should you care?")),
+                                                   
+                                                   p("Our policies may not be working in the way in which we would hope.
+                                                   The prevelance of the disease is not equitable, and certain groups are left carrying the brunt of
+                                                   the physical, financial, and emotional burden. From an ethical standpoint, this should serve
+                                                   as a call to action."),br(),
+
+                                                   p("Additionally, the United States is spending billions of dollars on treatment for HIV each year, and
+                                                     losing even more through loss of productivity. If we can lower the rates of HIV diagnoses, we could
+                                                     realize massive savings which could be directed towards other soc")
                                                    )
                                  )
                         ),
                                                    # This should be the beginning of the second tab.
                                                    
                                                    tabPanel("HIV",
-                                                            
-                                                          #  tags$head(
-                                                           #   tags$style(HTML("hr {border-top: 1px solid #000000;}"))
-                                                          #  ),
                                                             
                                                             # Here I load the cover photo.
                                                             
@@ -124,7 +126,20 @@ ui <- fluidPage(
                                                             
                                                             hr(),
                                                             
+                                                            fluidRow(column(2), column(8,
+                                                                                       h3(tags$b("General Population")), br(),
+                                                                                       
+                                                                                       p("With this interactive graph, we can start taking a closer look at who is being
+                                                                                       diagnosed with HIV. Go ahead and select one or multiple sexes along with several
+                                                                                       transmission categories in order to see how rates have changed throughout the
+                                                                                         year."), br(),
+                                                                                       
+                                                                                       p("You will notice that when you have all sexes and transmission categories
+selected, the chart mirrors what you saw on the introductory page. However, when
+you start segmenting out sex and condition, there's a different story."), br(),
+                                                                                       
                                                             sidebarLayout(
+                                                              
                                                               sidebarPanel(
                                                                 # Set an icon for the webpage along with wording
                                                                 
@@ -132,7 +147,7 @@ ui <- fluidPage(
                                                                 tags$head(tags$link(rel="shortcut icon", href="https://upload.wikimedia.org/wikipedia/commons/e/e6/World_Aids_Day_Ribbon.png")),
                                                                 
                                                                 # A short description of the options.
-                                                                
+                                                                                           
                                                                 p(tags$em("Select either Male, Female, or both sexes to see how rates of diagnoses vary by sex.")),
                                                                 
                                                                 selectInput("sexInput", "Sex", c(
@@ -149,40 +164,47 @@ ui <- fluidPage(
                                                                                                                                "Male-to-male sexual contact",
                                                                                                                                "Male-to-male sexual contact and injection drug use",
                                                                                                                                "Other"), multiple = TRUE)
+                                                               
                                                                 ),
                                                               mainPanel(
                                                                
                                                                  # Here I add in a fluid row. I'm not sure if I'll change this so that it matches the aesthetic of the first page.
-                                                                  
-                                                                  fluidRow(column(2), column(8,
+                             
                                                                                              # Here I load in the plot
-                                                                                             plotOutput("plot")
-                                                                                             )
-                                                                           )
-                                                                  )
-                                                              ),
+                                                                                             plotOutput("plot"), br(),
+                                                              )
+                                                            )
+                                                            )
+                                                            ),
+                                                            fluidRow(column(2), column(8,
+                                                                                       
+                                                            p("What I hope one gathers from this graph is that a decrease in HIV diagnoses has been enjoyed
+equitably across the country. Most of the decline in diagnoses has been for
+women. Male to male sexual contact, the transmission category responsible for
+the most new diagnoses, has remained relatively constant throughout the decade.
+Let's take a closer look at this transmission category.")
+                                                            )
+                                                            ),
                                                             
                                                             # Here I add the second chart to this page.
                                                             
-                                                                sidebarPanel(
+                                                            fluidRow(column(2), column(8,
+                                                                                       h3(tags$b("Transmission Category")), br(),
+                                                                                       sidebarPanel(
                                                                   
                                                                   # A short description of the options.
                                                                   
                                                                   p(tags$em("Select one or multiple races from the options below")),
                                                                   
-                                                                    selectInput("raceInput", "Race", c("Black/African American",
-                                                                                                       "White",
+                                                                  # I decided to set the default value as Asian here in order to avoid the error message that one value is needed.
+                                                                  
+                                                                  selectInput("raceInput", "Race", c("Asian",
+                                                                                                       "Black/African American",
                                                                                                        "Hispanic/Latino",
-                                                                                                       "Asian"), multiple = TRUE)
+                                                                                                       "White"), selected = "Asian", multiple = TRUE)
                                                                                 ),
                                                                     mainPanel(
-                                                                      # I add this in because if not there is an error that one or more values is needed for faceting.
-                                                                      
-                                                                      #tags$style(type="text/css",
-                                                                                # ".shiny-output-error { visibility: hidden; }",
-                                                                                 #".shiny-output-error:before { visibility: hidden; }"
-                                                                      #),
-                                                                        fluidRow(column(2), column(8, 
+                               
                                                                         plotOutput("race")
                                                                     )
                                                                     
@@ -207,7 +229,18 @@ ui <- fluidPage(
                         # Here I add in a static plot to show rates of prep usage. I also add the fluid row.
                         
                         fluidRow(column(2), column(8,
-                                                   p("The key takeaway is that the majority of the users are men. In fact, in 2018 only about 6.6% of the 132333 users were women."),
+                                                   
+                                                   h3(tags$b("What is it")),
+                                                   
+                                                   p("PrEP is a method used by high-risked individuals to prevent HIV. Currently,
+there are two brand named medications that are used for PrEP: Truvada and
+Descovy. These medications work by preventing HIV from spreading throughout your
+body after exposure. The pills must be taken daily, and, when used correctly,
+the CDC estimates that they are up to 99% effective."),
+                                                   
+                                                   h3(tags$b("Users")),
+                                                   
+                                                   p("The key takeaways are that usage of PrEP has skyrocketted, and that the majority of the users are men. In fact, in 2018 only about 6.6% of the 132,333 users were women."),
                                                    br(),
                                                    
                                                    plotOutput("prepTotal", width = "100%", height = "100%"), br(),
@@ -237,6 +270,9 @@ ui <- fluidPage(
                         hr(), 
                         
                         fluidRow(column(2), column(8,
+                                                   
+                                                   h3(tags$b("HIV")),
+                                                   
                                                    p("With all of these diagnoses, one may wonder how much it costs society. While
 there are several frameworks once can use to consider the cost of HIV, for our
 purposes, the most relevant is that of indirect and direct costs."), br(),
@@ -304,8 +340,9 @@ financial burden over the last 10 years. Take a look at the direct costs for dif
                                  )
                         ),
                         fluidRow(column(2), column(8,
+                                                   h3(tags$b("Other STIs")),
                                                    
-                                                   p("Interested to see how these costs compare to other STIs? In the table below, I've compiled costs of two of the most prevalant STIs in the United States: Chlamydia and Gonorreah."),br(),
+                                                   p("Interested to see how these costs compare to other STIs? In the table below, I've compiled costs of two of the most prevalant STIs in the United States: Chlamydia and Gonorrhea."),br(),
                                                    
                                                    sidebarPanel(
                                                      
@@ -321,7 +358,18 @@ financial burden over the last 10 years. Take a look at the direct costs for dif
                                                      br(), gt_output('table3'), br(), br()
                                                    ),
                                                    
-                                                   p("You may notice that the costs of these other STIs do not come close to the costs incurred to both the individual and to society with HIV."),
+                                                   p("A couple of things should jump out here... The first being that the costs
+incurred by women are generally much higher than that of men. Rather than
+resulting from a massive increase in number of cases for women, this is largely
+the result of STI treatment being much more expensive. For HIV, the associated
+costs are the same accross sex."), br(),
+                                                   p("Another takeaway is that the values are much lower in this table than in the
+table of HIV costs. This is to say that the costs of these other STIs do not
+come close to the costs incurred to both the individual and to society with HIV.
+With this in mind, finding a method for curbing the prevalence of HIV should be
+a top priority for those financially invested players such as policy makers and
+other officials."), br(),
+                                                   
                                                    
                         )
                         )
@@ -542,16 +590,6 @@ server <- function(input, output, session) {
          select(year, direct_costs, indirect_costs, total_costs) %>%
          ungroup(year) %>% 
          gt() %>% 
-         #data_color(
-          # columns = vars(direct_costs, indirect_costs, total_costs),
-          # colors = scales::col_numeric(
-           #  palette = paletteer::paletteer_d(
-           #    palette = "ggsci::red_material"
-           #  ) %>% as.character(),
-           #  domain = NULL
-          # ),
-          # alpha = 0.8
-        # ) %>% 
          tab_header(
            title = "HIV Associated Costs by Year",
            subtitle= "Prices are in 2020 USD") %>% 
@@ -565,27 +603,17 @@ server <- function(input, output, session) {
          fmt_number(.,2:4, decimals = 0)
        
      })
-     
+    
      output$table3 <- render_gt({
-       
        filtered5 <-
          chlamydia_gonorrea_total %>% 
-         filter(indicator == input$stiInput)
+         filter(indicator == input$stiInput) 
        
        filtered5 %>% 
-         group_by(indicator, year, sex) %>% 
-         mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
-                                      ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 449.33,
-                                             ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 34.06,
-                                                    ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))),
-                indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 61.57, 
-                                        ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 61.57,
-                                               ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 13.10	,
-                                                      ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 13.10, 0)))),
-                total_costs = direct_costs + indirect_costs) %>%
-         ungroup(indicator, sex, year) %>% 
-         select(year, sex, direct_costs, indirect_costs, total_costs) %>%
-         gt() %>% 
+         group_by(indicator, year, sex) %>%
+       ungroup(indicator, sex, year) %>% 
+      select(year, sex, direct_costs, indirect_costs, total_costs) %>%
+       gt() %>% 
          tab_header(
            title = "STI Associated Costs by Year",
            subtitle= "Prices are in 2020 USD") %>% 
@@ -597,10 +625,8 @@ server <- function(input, output, session) {
            total_costs = "Total Costs") %>% 
          data_color(3:5, "Reds") %>% 
          fmt_currency(., 3:5) %>% 
-        fmt_number(.,3:5, decimals = 0)
-       
+         fmt_number(.,3:5, decimals = 0)
      })
-     
      # Here I load in the about page of my project. It is an HTML document.
      
      output$about <- renderUI({
