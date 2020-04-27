@@ -92,9 +92,12 @@ costs_clean <- table_costs_messy %>%
     values_to = "cost",
     values_drop_na = FALSE
   ) %>% 
+  
 # I did this line below to get rid of extra text in the parameter column.
   mutate_all(~ gsub(x =., pattern = "\\*| \\[5]| \\[6]| \\[1,64,65]| \\[85]", "")) %>% 
 
+# I do this to convert the amount to 2020 USD
+  
   mutate(cost_2006 = parse_number(cost)) %>% 
   mutate(cost_2020 = (cost_2006 * 1.31)) %>% 
   select("parameter", "sex", "cost_2020")
@@ -304,51 +307,6 @@ hiv_aids_year <- hiv_aids_all %>%
 write_csv(hiv_aids_year, "csv/hiv_aids_year.csv")
 ```
 
-```{r HIV Costs}
-
-hiv_cost <- hiv_aids_year %>% 
-  mutate(direct_costs = total_cases * 259997.01,
-         indirect_costs = total_cases * 1089414.34,
-         total_costs = direct_costs + indirect_costs) %>%
-  select(year, direct_costs, indirect_costs, total_costs) %>% 
-  gt() %>%
-  tab_header(
-    title = "HIV Associated Costs by Year",
-    subtitle= "Prices are in 2020 USD") %>%
-  cols_label(
-    year = "Year",
-    direct_costs = "Direct Costs",
-    indirect_costs = "Indirect Costs",
-    total_costs = "Total Costs")
-
-  fmt_currency(hiv_cost, 2:4)
-```
-
-```{r}
-hiv_aids_all %>% 
-  filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
-  group_by(year, race_ethnicity) %>%
-  summarize(total_cases = sum(cases)) %>% 
-  mutate(direct_costs = total_cases * 259997.01,
-                indirect_costs = total_cases * 1089414.34,
-                total_costs = direct_costs + indirect_costs) %>%
-  select(year, direct_costs, indirect_costs, total_costs) %>%
-  ungroup(year) %>% 
-         gt() %>% 
-
-         tab_header(
-           title = "HIV Associated Costs by Year",
-           subtitle= "Prices are in 2020 USD") %>% 
-         cols_label(
-           direct_costs = "Direct Costs",
-           indirect_costs = "Indirect Costs",
-           total_costs = "Total Costs") %>% 
-         fmt_currency(., 2:4) %>% 
-    fmt_number(.,2:4, decimals = 0)
-
-```
-
-
 ```{r HIV Diagnoses Transmission Category table}
 # Table of HIV rates by transmission category
 
@@ -393,8 +351,6 @@ z <- syphilis %>%
   mutate(case_numeric = y) %>% 
   group_by(indicator)
 
-
-ggplot(z, aes(x = year, y = case_numeric)) +geom_col()
 ```
 
 ```{r}
@@ -427,43 +383,19 @@ chlamydia_gonorrhea_numeric <- chlamydia_gonorrhea %>%
 
 chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>% 
   group_by(indicator, year, sex) %>% 
-  summarise(total_cases = sum(cases_numeric))
-
+  summarise(total_cases = sum(cases_numeric)) %>% 
+  mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
+                                      ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 449.33,
+                                             ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 34.06,
+                                                    ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))),
+                indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 61.57, 
+                                        ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 61.57,
+                                               ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 13.10	,
+                                                      ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 13.10, 0)))),
+                total_costs = direct_costs + indirect_costs)
 # to load
 
 write_csv(chlamydia_gonorrea_total,"csv/chlamydia_gonorrea_total.csv")
-
-# Can be deleted
-
-chlamydia_gonorrea_total %>% 
-  group_by(indicator, year, sex) %>% 
-  mutate(direct_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 412.65, 
-                               ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 449.33,
-                                       ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 34.06,
-                                              ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 89.08, 0)))),
-         indirect_costs = ifelse(sex == "Female" & indicator == "Chlamydia", total_cases * 61.57, 
-                               ifelse(sex == "Female" & indicator == "Gonorrhea", total_cases * 61.57,
-                                       ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 13.10	,
-                                              ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 13.10, 0)))),
-         total_costs = direct_costs + indirect_costs) %>%
-  select(indicator, year, sex, direct_costs, indirect_costs, total_costs) %>%
-  ungroup(indicator, sex, year) %>% 
-         gt() %>% 
-  tab_header(
-           title = "STI Associated Costs by Year",
-           subtitle= "Prices are in 2020 USD") %>% 
-         cols_label(
-           indicator = "Indicator",
-           year = "Year",
-           sex = "Sex",
-           direct_costs = "Direct Costs",
-           indirect_costs = "Indirect Costs",
-           total_costs = "Total Costs") %>%
-  fmt_currency(., 4:6) %>% 
-  fmt_number(.,4:6, decimals = 0)
-                            
-                                
-      
 ```
 
 
