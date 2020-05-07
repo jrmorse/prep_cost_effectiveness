@@ -26,6 +26,9 @@ library(wesanderson)
 library(infer)
 library(scales)
 library(tidyverse)
+library(usmap)
+library(broom)
+library(dplyr)
 ```
 
 My work so far: My data comes from a variety of sources that includes the CDC,
@@ -180,9 +183,9 @@ for (i in 1:length(list)){
   prep_data_state = rbind(prep_data_state, temp_data)
 }
 
-# prep racial estimation
-# this is 2016 data.
-# I think I will assume these rates as constant and see how it might explain different trends by race. Is there some way I can hold other variables constant?
+# prep racial estimation this is 2016 data.
+# I think I will assume these rates as constant and see how it might explain different trends by
+# race.
 
 prep_race <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/table/T2/?report=objectonly")%>% 
   html_node("table") %>% 
@@ -191,6 +194,7 @@ prep_race <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/tab
   slice(16:20)
 
 # Changing names of the races so that they match the data set I have from the CDC. Also getting rid of unwanted characters and converting to numerics so that I can find percentage by demographic.
+
 race <- str_replace(prep_race$characteristic, "Black", "Black/ African American")
 race <- str_replace(race, "Hispanic", "Hispanic/ Latino")
 drug_use_30 <- str_replace(prep_race$length_of_drug_useno_percent, " \\(.*\\)", "")
@@ -239,6 +243,18 @@ prep_gender <- rbind(prep_f_state, prep_m_state) %>%
 #to load
 
 write_csv(prep_gender, "csv/prep_gender.csv")
+```
+
+
+```{r}
+
+prep_state <- rbind(prep_f_state, prep_m_state) %>% 
+  group_by(year, state) %>% 
+  summarize(total_cases = sum(pr_ep_users))
+
+# to load for map
+write_csv(prep_state, "csv/prep_state.csv")
+
 ```
 
 ```{r prep_m_state with race}
@@ -295,6 +311,26 @@ hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>%
 write_csv(hiv_aids_all, "csv/hiv_aids_all.csv")
 ```
 
+
+```{r}
+
+
+regression <- hiv_aids_all %>%
+  filter(sex == "Male") %>% 
+  group_by(transmission_category, year, race_ethnicity) %>%
+  filter(race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian") & transmission_category == "Male-to-male sexual contact") %>% 
+  summarize(total_cases = sum(cases)) %>% filter (race_ethnicity == "Asian")
+
+
+# to load
+
+write_csv(regression, "csv/regression.csv")
+
+
+
+
+```
+
 ```{r HIV Cases by year}
 # A table with hiv diagnoses by year for both sexes.
 
@@ -323,7 +359,14 @@ hiv_aids_maletomalesexualcontact <- hiv_aids_all %>%
   group_by(year, race_ethnicity) %>%
   summarize(total_cases = sum(cases))
 
+
+# to load
 write_csv(hiv_aids_maletomalesexualcontact,"csv/hiv_aids_maletomalesexualcontact.csv")
+```
+
+```{r}
+
+interaction <- lm(total_cases ~ race_ethnicity * transmission_category )
 ```
 
 
@@ -342,15 +385,6 @@ syphilis[syphilis == "Data not available"] <-NA
 syphilis <-  syphilis%>% 
 filter(!is.na(cases)) %>% 
   select(indicator, year, cases)
-
-y <- as.numeric(syphilis$cases)
-
-# Adding this column back to the data set.
-
-z <- syphilis %>% 
-  mutate(case_numeric = y) %>% 
-  group_by(indicator)
-
 ```
 
 ```{r}
@@ -393,32 +427,11 @@ chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>%
                                                ifelse(sex == "Male" & indicator == "Chlamydia", total_cases * 13.10	,
                                                       ifelse(sex == "Male" & indicator == "Gonorrhea", total_cases * 13.10, 0)))),
                 total_costs = direct_costs + indirect_costs)
+
 # to load
 
 write_csv(chlamydia_gonorrea_total,"csv/chlamydia_gonorrea_total.csv")
 ```
-
-
-```{r}
-# Think i will ignore this and do syphillis separately
-
-sti_join <- chlamydia_gonorrhea %>% 
-  select(indicator, year, cases) %>% 
-  rbind(., syphilis)
-
-# Converting cases to numbers. 
-x <- as.numeric(sti_join$cases)
-
-# Adding this column back to the data set.
-
-sti_join <- sti_join %>% 
-  mutate(case_numeric = x) %>% 
-  group_by(indicator, year) %>%
-  summarize(total_cases = sum(case_numeric))
-
-
-```
-
 
 
 

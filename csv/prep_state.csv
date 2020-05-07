@@ -1,0 +1,313 @@
+year,state,total_cases
+2013,Alabama,111
+2013,Alaska,12
+2013,Arizona,209
+2013,Arkansas,39
+2013,California,1714
+2013,Colorado,179
+2013,Connecticut,203
+2013,Delaware,45
+2013,Florida,951
+2013,Georgia,312
+2013,Hawaii,26
+2013,Idaho,22
+2013,Illinois,515
+2013,Indiana,151
+2013,Iowa,80
+2013,Kansas,44
+2013,Kentucky,71
+2013,Louisiana,142
+2013,Maine,42
+2013,Maryland,247
+2013,Massachusetts,1026
+2013,Michigan,228
+2013,Minnesota,178
+2013,Mississippi,40
+2013,Missouri,157
+2013,Montana,19
+2013,Nebraska,39
+2013,Nevada,78
+2013,New Hampshire,60
+2013,New Jersey,421
+2013,New Mexico,50
+2013,New York,2002
+2013,North Carolina,251
+2013,North Dakota,11
+2013,Ohio,282
+2013,Oklahoma,43
+2013,Oregon,126
+2013,Pennsylvania,508
+2013,Puerto Rico,15
+2013,Rhode Island,101
+2013,South Carolina,79
+2013,South Dakota,14
+2013,Tennessee,116
+2013,Texas,706
+2013,Utah,59
+2013,Vermont,7
+2013,Virginia,282
+2013,Washington,271
+2013,"Washington, D.C.",112
+2013,West Virginia,30
+2013,Wisconsin,107
+2013,Wyoming,7
+2014,Alabama,175
+2014,Alaska,22
+2014,Arizona,388
+2014,Arkansas,105
+2014,California,3860
+2014,Colorado,383
+2014,Connecticut,482
+2014,Delaware,92
+2014,Florida,1829
+2014,Georgia,791
+2014,Hawaii,64
+2014,Idaho,47
+2014,Illinois,1575
+2014,Indiana,256
+2014,Iowa,148
+2014,Kansas,127
+2014,Kentucky,161
+2014,Louisiana,256
+2014,Maine,66
+2014,Maryland,532
+2014,Massachusetts,1806
+2014,Michigan,489
+2014,Minnesota,407
+2014,Mississippi,111
+2014,Missouri,326
+2014,Montana,20
+2014,Nebraska,63
+2014,Nevada,149
+2014,New Hampshire,109
+2014,New Jersey,842
+2014,New Mexico,92
+2014,New York,4253
+2014,North Carolina,542
+2014,North Dakota,21
+2014,Ohio,673
+2014,Oklahoma,113
+2014,Oregon,314
+2014,Pennsylvania,944
+2014,Puerto Rico,24
+2014,Rhode Island,204
+2014,South Carolina,198
+2014,South Dakota,23
+2014,Tennessee,288
+2014,Texas,1882
+2014,Utah,157
+2014,Vermont,35
+2014,Virginia,572
+2014,Washington,851
+2014,"Washington, D.C.",425
+2014,West Virginia,68
+2014,Wisconsin,228
+2014,Wyoming,8
+2015,Alabama,440
+2015,Alaska,57
+2015,Arizona,739
+2015,Arkansas,221
+2015,California,8097
+2015,Colorado,836
+2015,Connecticut,919
+2015,Delaware,168
+2015,Florida,4081
+2015,Georgia,1654
+2015,Hawaii,156
+2015,Idaho,98
+2015,Illinois,3444
+2015,Indiana,675
+2015,Iowa,335
+2015,Kansas,269
+2015,Kentucky,354
+2015,Louisiana,562
+2015,Maine,138
+2015,Maryland,1168
+2015,Massachusetts,3438
+2015,Michigan,1089
+2015,Minnesota,873
+2015,Mississippi,227
+2015,Missouri,810
+2015,Montana,61
+2015,Nebraska,148
+2015,Nevada,366
+2015,New Hampshire,190
+2015,New Jersey,1685
+2015,New Mexico,190
+2015,New York,9114
+2015,North Carolina,1218
+2015,North Dakota,33
+2015,Ohio,1647
+2015,Oklahoma,302
+2015,Oregon,659
+2015,Pennsylvania,2061
+2015,Puerto Rico,65
+2015,Rhode Island,396
+2015,South Carolina,387
+2015,South Dakota,65
+2015,Tennessee,689
+2015,Texas,4029
+2015,Utah,408
+2015,Vermont,63
+2015,Virginia,1137
+2015,Washington,1951
+2015,"Washington, D.C.",1024
+2015,West Virginia,129
+2015,Wisconsin,545
+2015,Wyoming,17
+2016,Alabama,632
+2016,Alaska,64
+2016,Arizona,1004
+2016,Arkansas,291
+2016,California,10388
+2016,Colorado,1048
+2016,Connecticut,949
+2016,Delaware,245
+2016,Florida,5638
+2016,Georgia,2165
+2016,Hawaii,211
+2016,Idaho,149
+2016,Illinois,4404
+2016,Indiana,954
+2016,Iowa,463
+2016,Kansas,319
+2016,Kentucky,447
+2016,Louisiana,709
+2016,Maine,168
+2016,Maryland,1499
+2016,Massachusetts,3443
+2016,Michigan,1353
+2016,Minnesota,1290
+2016,Mississippi,290
+2016,Missouri,1075
+2016,Montana,81
+2016,Nebraska,158
+2016,Nevada,541
+2016,New Hampshire,226
+2016,New Jersey,1970
+2016,New Mexico,246
+2016,New York,12686
+2016,North Carolina,1472
+2016,North Dakota,53
+2016,Ohio,2480
+2016,Oklahoma,395
+2016,Oregon,944
+2016,Pennsylvania,2744
+2016,Puerto Rico,55
+2016,Rhode Island,437
+2016,South Carolina,474
+2016,South Dakota,69
+2016,Tennessee,938
+2016,Texas,4808
+2016,Utah,540
+2016,Vermont,61
+2016,Virginia,1364
+2016,Washington,2694
+2016,"Washington, D.C.",1571
+2016,West Virginia,153
+2016,Wisconsin,736
+2016,Wyoming,26
+2017,Alabama,899
+2017,Alaska,88
+2017,Arizona,1564
+2017,Arkansas,391
+2017,California,12778
+2017,Colorado,1416
+2017,Connecticut,1214
+2017,Delaware,306
+2017,Florida,7594
+2017,Georgia,2656
+2017,Hawaii,242
+2017,Idaho,184
+2017,Illinois,5409
+2017,Indiana,1236
+2017,Iowa,678
+2017,Kansas,391
+2017,Kentucky,595
+2017,Louisiana,1078
+2017,Maine,225
+2017,Maryland,2015
+2017,Massachusetts,3803
+2017,Michigan,1815
+2017,Minnesota,1597
+2017,Mississippi,363
+2017,Missouri,1325
+2017,Montana,95
+2017,Nebraska,234
+2017,Nevada,765
+2017,New Hampshire,249
+2017,New Jersey,2658
+2017,New Mexico,369
+2017,New York,17206
+2017,North Carolina,1798
+2017,North Dakota,83
+2017,Ohio,3348
+2017,Oklahoma,481
+2017,Oregon,1293
+2017,Pennsylvania,3809
+2017,Puerto Rico,41
+2017,Rhode Island,540
+2017,South Carolina,590
+2017,South Dakota,76
+2017,Tennessee,1336
+2017,Texas,6436
+2017,Utah,692
+2017,Vermont,84
+2017,Virginia,1744
+2017,Washington,3451
+2017,"Washington, D.C.",1869
+2017,West Virginia,228
+2017,Wisconsin,916
+2017,Wyoming,29
+2018,Alabama,1194
+2018,Alaska,148
+2018,Arizona,2167
+2018,Arkansas,616
+2018,California,15218
+2018,Colorado,1855
+2018,Connecticut,1774
+2018,Delaware,403
+2018,Florida,10223
+2018,Georgia,3279
+2018,Hawaii,303
+2018,Idaho,232
+2018,Illinois,6929
+2018,Indiana,1728
+2018,Iowa,914
+2018,Kansas,593
+2018,Kentucky,883
+2018,Louisiana,1883
+2018,Maine,320
+2018,Maryland,2803
+2018,Massachusetts,5124
+2018,Michigan,2764
+2018,Minnesota,2034
+2018,Mississippi,519
+2018,Missouri,1809
+2018,Montana,128
+2018,Nebraska,345
+2018,Nevada,956
+2018,New Hampshire,402
+2018,New Jersey,3803
+2018,New Mexico,514
+2018,New York,21416
+2018,North Carolina,2515
+2018,North Dakota,115
+2018,Ohio,4878
+2018,Oklahoma,748
+2018,Oregon,1592
+2018,Pennsylvania,4964
+2018,Puerto Rico,98
+2018,Rhode Island,726
+2018,South Carolina,901
+2018,South Dakota,108
+2018,Tennessee,1809
+2018,Texas,9442
+2018,Utah,812
+2018,Vermont,124
+2018,Virginia,2400
+2018,Washington,4057
+2018,"Washington, D.C.",2295
+2018,West Virginia,324
+2018,Wisconsin,1099
+2018,Wyoming,47

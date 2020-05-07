@@ -28,6 +28,7 @@ library(wesanderson)
 library(infer)
 library(scales)
 library(tidyverse)
+library(broom)
 
 # Need to load in the appropriate data
 
@@ -40,14 +41,18 @@ hiv_aids_all <- read_csv("csv/hiv_aids_all.csv")
 hiv_aids_year <- read_csv("csv/hiv_aids_year.csv")
 hiv_aids_maletomalesexualcontact <- read_csv("csv/hiv_aids_maletomalesexualcontact.csv")
 chlamydia_gonorrea_total<- read_csv("csv/chlamydia_gonorrea_total.csv")
+prep_state <- read_csv("csv/prep_state.csv")
+regression <- read_csv("csv/regression.csv")
 
-#
+# Here I begin the UI for my app.
+
 ui <- fluidPage(
-    # Here I set the theme and a title for my app.
+  
+    # Setting the theme and a title for my app.
     
     theme = shinytheme("lumen"),
     
-    navbarPage(tags$b("HIV in the United States & The Promise of PrEP"),
+    navbarPage(tags$b("HIV in the United States & The Potential of PrEP"),
                
                # Create the first tab, which will be the first page that people will see when they open up the ShinyApp.
                
@@ -57,9 +62,9 @@ ui <- fluidPage(
                         
                         imageOutput("image", width = "100%", height = "100%"), br(),
                         
-                        # Title of the page along with a subtitle. Likely will need to tweek this.
+                        # Title of the page along with a subtitle.
                         
-                        h1(tags$b("HIV in the United States & The Promise of PrEP"), align = "center"),
+                        h1(tags$b("HIV in the United States & The Potential of PrEP"), align = "center"),
                         p(tags$em("Inequity in Prevalence and Prevention"), align = "center"), br(),
                         
                         # Presents an arrow so that readers know the next step is to scroll.
@@ -71,20 +76,22 @@ ui <- fluidPage(
                         
                         fluidRow(column(2), column(8, 
                                           
-                                                   
                                                    p("Since the HIV/AIDS epidemic first began in 1981, amazing, albeit slow, progress
                                                    has been made in the treatment and management of the disease in the United
                                                    States. Public Health campaigns combined with powerful pharmaceutical
-                                                   innovations have played a pivotal role in changing the perception of the
-                                                   diagnosis of HIV from a death sentence to that of a chronic condition. In 2012,
-                                                   the United States witnessed the approval of a new drug that was able to prevent
+                                                   innovations have played a pivotal role in decreasing the total number of new
+                                                   diagnoses each year and in changing the perception of an HIV diagnoses from that 
+                                                   of a death sentence to that of a chronic condition."),br(),
+                                                   
+                                                   p("One of the most important steps forward came in 2012, when the United States
+                                                   witnessed the approval of a new drug that was able to prevent
                                                    the onset of HIV for at risk individuals. With, Pre-Exposure Prophylaxis (PrEP)
-                                                   medication, high risk individuals have been able to live without contracting
-                                                   HIV, thus saving millions of dollars each year for the U.S. healthcare system."), br(),
+                                                   medication, these individuals have been able to live without contracting
+                                                   HIV, and have saved billions of dollars for the U.S. healthcare system."), br(),
                                                   
-                                                   p(" Throughout this application, we will take a look at the state of HIV today.
-                                                   We will learn where we have been successful at combatting the disease and where
-                                                   we still have work to do."),
+                                                   p("Throughout this application, we will begin by taking a look at the state of HIV today.
+                                                   We will learn where society has been successful at combatting the disease and where
+                                                   we still have much work to do."),
                                                    br(), 
                                                    
                                                    h3(tags$b("At a glance...")),
@@ -96,23 +103,27 @@ ui <- fluidPage(
                                                   
                                                    plotOutput("hivTotal", width = "100%", height = "100%"), br(),
                                                    
-                                                   p("As you will see in the coming sections of this app, this observed downward trend may 
+                                                   p("As you will see in the coming sections of this application, this observed downward trend may 
                                                      not tell the whole story..."), br(),
                                                    
                                                    h3(tags$b("Why should you care?")),
+                                                   
+                                                   h5(tags$b("Health Inequity")),
                                                    
                                                    p("Our policies may not be working in the way in which we would hope.
                                                    The prevelance of the disease is not equitable, and certain groups are left carrying the brunt of
                                                    the physical, financial, and emotional burden. From an ethical standpoint, this should serve
                                                    as a call to action."),br(),
+                                                   
+                                                   h5(tags$b("Financial Losses")),
 
                                                    p("Additionally, the United States is spending billions of dollars on treatment for HIV each year, and
-                                                     losing even more through loss of productivity. If we can lower the rates of HIV diagnoses, we could
-                                                     realize massive savings which could be directed towards other soc")
+                                                     losing even more through loss of productivity. If we can lower the rates of HIV diagnoses, we can
+                                                     realize massive savings which can be directed towards distinct social programs.")
                                                    )
                                  )
                         ),
-                                                   # This should be the beginning of the second tab.
+                                                   # This is the beginning of the second tab.
                                                    
                                                    tabPanel("HIV",
                                                             
@@ -133,11 +144,11 @@ ui <- fluidPage(
                                                                                        diagnosed with HIV. Go ahead and select one or multiple sexes along with several
                                                                                        transmission categories in order to see how rates have changed throughout the
                                                                                          year."), br(),
-                                                                                       
-                                                                                       p("You will notice that when you have all sexes and transmission categories
-selected, the chart mirrors what you saw on the introductory page. However, when
-you start segmenting out sex and condition, there's a different story."), br(),
-                                                                                       
+                                                                                         
+                                                                                         p("You will notice that when you have all sexes and transmission categories
+                                                                                         selected, the chart mirrors what you saw on the introductory page. However, when
+                                                                                           you start segmenting out sex and condition, there's a different story."), br(),
+                                                                                                   
                                                             sidebarLayout(
                                                               
                                                               sidebarPanel(
@@ -152,10 +163,9 @@ you start segmenting out sex and condition, there's a different story."), br(),
                                                                 
                                                                 selectInput("sexInput", "Sex", c(
                                                                     "Male",
-                                                                    "Female"), multiple = TRUE)
-                                                              ,
+                                                                    "Female"), multiple = TRUE),
                                                               
-                                                                p(tags$em("Select a transmission category to view nation totals on a yearly basis")),
+                                                                p(tags$em("Select a transmission category to view the nation's total new diagnoses on a yearly basis")),
                                                                 
                                                                 # Include the option for users to select what transmission category they would like to see.
                                                                 
@@ -167,50 +177,93 @@ you start segmenting out sex and condition, there's a different story."), br(),
                                                                
                                                                 ),
                                                               mainPanel(
-                                                               
-                                                                 # Here I add in a fluid row. I'm not sure if I'll change this so that it matches the aesthetic of the first page.
-                             
-                                                                                             # Here I load in the plot
-                                                                                             plotOutput("plot"), br(),
+                                                                
+                                                                # Here I load in the plot
+                                                                
+                                                                plotOutput("plot"), br(),
+                                                                )
                                                               )
                                                             )
-                                                            )
                                                             ),
+                                                            
                                                             fluidRow(column(2), column(8,
                                                                                        
-                                                            p("What I hope one gathers from this graph is that a decrease in HIV diagnoses has been enjoyed
-equitably across the country. Most of the decline in diagnoses has been for
-women. Male to male sexual contact, the transmission category responsible for
-the most new diagnoses, has remained relatively constant throughout the decade.
-Let's take a closer look at this transmission category.")
+                                                            p("The purpose of this graph is to show that a decrease in HIV diagnoses has not
+                                                            been universally enjoyed across the all groups in the United States. The majority
+                                                            of the decline in anual diagnoses has been for women. Male to male sexual contact,
+                                                            the transmission category responsible for the most new diagnoses, has remained 
+                                                            relatively constant throughout the decade."), br(),
+                                                            
+                                                            p("Let's take a closer look at this transmission category..."), br()
                                                             )
                                                             ),
                                                             
                                                             # Here I add the second chart to this page.
                                                             
                                                             fluidRow(column(2), column(8,
-                                                                                       h3(tags$b("Transmission Category")), br(),
+                                                                                       h3(tags$b("Transmission Category: Male to Male Sexual Contact")), 
+                                                                                       
+                                                                                       h5(tags$b("Total Diagnoses")), br(),
+                                                                                       
+                                                                                       p("In the chart below, please select multiple racial groups to vizualize the
+                                                                                         new diagnoses of HIV for the four racial groups who carry the largest total
+                                                                                         number of diagnoses on an annual basis."), br(),
+                                                                                       
                                                                                        sidebarPanel(
                                                                   
                                                                   # A short description of the options.
                                                                   
-                                                                  p(tags$em("Select one or multiple races from the options below")),
+                                                                  p(tags$em("Select races from the options below")),
                                                                   
                                                                   # I decided to set the default value as Asian here in order to avoid the error message that one value is needed.
                                                                   
-                                                                  selectInput("raceInput", "Race", c("Asian",
+                                                                  selectInput("race2Input", "Race", c("Asian",
                                                                                                        "Black/African American",
                                                                                                        "Hispanic/Latino",
                                                                                                        "White"), selected = "Asian", multiple = TRUE)
                                                                                 ),
                                                                     mainPanel(
-                               
-                                                                        plotOutput("race")
-                                                                    )
-                                                                    
-                                                                )
-                                                   )
-               ),
+                                                                                                    plotOutput("race2"), br(),br())
+                                                                  )
+                                                                  ),
+                                                                  
+                                                                  fluidRow(column(2), column(8,
+                                                                                             h3(tags$b("Race as an Explanatory Variable")), br(),
+                                                                                             
+                                                                                             p("Here you will see a similar graphic to what is shown above. Rather than viewing merely
+                                                                                                 the total cases per year, however, we are focusing on the line of best fit. The line of
+                                                                                               best fit for White men is perhaps the most striking as it is the only line with a negative
+                                                                                               slope. While all other selected racial groups are trending up, White men are exhibiting a
+                                                                                               decrease in annual diagnoses."), br(),
+                                                                                             
+                                                                                             sidebarPanel(
+                                                                                               
+                                                                                               # A short description of the options.
+                                                                                               
+                                                                                               p(tags$em("Select one or multiple races from the options below")),
+                                                                                               
+                                                                                               # I decided to set the default value as Asian here in order to avoid the error message that one value is needed.
+                                                                                               
+                                                                                               selectInput("raceInput", "Race", c("Asian",
+                                                                                                                                  "Black/African American",
+                                                                                                                                  "Hispanic/Latino",
+                                                                                                                                  "White"), selected = "Asian", multiple = TRUE)
+                                                                                               
+                                                                                             ),
+                                                                                               mainPanel(
+                                                                                                 
+                                                                                                 plotOutput("race"), br()
+                                                                                                 )
+                                                                                             )
+                                                                           ),
+                                                                                               
+                                                                                                 fluidRow(column(2), column(8,  
+                                                                                                 p("The line of best fit for white men is perhaps the most striking as it is the only line with a negative
+                                                                                               slope. While all other selected racial groups are trending up, white men are exhibiting a
+                                                                                               decrease in annual diagnoses."), br()
+                                                                                                 )
+                                                                                                 )
+                                                            ),
                
                # Creating the third tab
                
@@ -218,11 +271,11 @@ Let's take a closer look at this transmission category.")
                         
                         #Setting a cover photo for the page.
                         
-                        imageOutput("medicine2", width = "100%", height = "100%"),
+                        imageOutput("medicine2", width = "100%", height = "100%"), br(),
                         
                         # Title for the page
                         
-                        h1(tags$b("Who is using PrEP?"), align = "center"), br(),
+                        h1(tags$b("Who is using PrEP?"), align = "center"),
                         
                         hr(),
                         
@@ -232,24 +285,75 @@ Let's take a closer look at this transmission category.")
                                                    
                                                    h3(tags$b("What is it")),
                                                    
-                                                   p("PrEP is a method used by high-risked individuals to prevent HIV. Currently,
-there are two brand named medications that are used for PrEP: Truvada and
-Descovy. These medications work by preventing HIV from spreading throughout your
-body after exposure. The pills must be taken daily, and, when used correctly,
-the CDC estimates that they are up to 99% effective."),
+                                                   p("PrEP is a method used by high-risked individuals to prevent HIV. As of October 2019,
+                                                   there are two brand named medications that are used for PrEP: Truvada and
+                                                   Descovy. These medications work by preventing HIV from spreading throughout your
+                                                   body after exposure. The pills must be taken daily, and, when used correctly,
+                                                     the CDC estimates that they are up to 99% effective."),
                                                    
                                                    h3(tags$b("Users")),
                                                    
-                                                   p("The key takeaways are that usage of PrEP has skyrocketted, and that the majority of the users are men. In fact, in 2018 only about 6.6% of the 132,333 users were women."),
-                                                   br(),
+                                                   h5(tags$b("Nation-wide")),
                                                    
-                                                   plotOutput("prepTotal", width = "100%", height = "100%"), br(),
+                                                   p("The key takeaways are that usage of PrEP has skyrocketted, and that the majority of
+                                                   the users are men. In fact, in 2018 only about 6.6% of the 132,333 users were women."),
+                                                   br()
+                                                   )
+                                 ),
+                        
+                    
+                        fluidRow(column(2), column(8,
+                                                   plotOutput("prepTotal", width = "100%", height = "100%"), align = "center", br()
+                                                   )
+                                 ),
+                        fluidRow(column(2), column(8,
+                                                   
+                                                   h5(tags$b("State-wide")),
                                                   
-                                                    p("Curious to know how PrEP usage varies accross demographics? Imagine you could take a sample of a size of your chosing. Enter the number of individuals you would like in your sample in order to see the racial breakdown of users. You will note that the userbase is overwhelmingly comprised of white men. In 2016 it was estimated that 67% of the users were White men, 12% Black men, 13% Hispanic or Latino men, and 4% Asian men."),br(),
+                                                   p("If we look at regional data, you'll notice that it is states with large urban
+                                                   populations that have the highest PrEP usage. States like California, New York,
+                                                   Florida, and Texas, all have relatively high total numbers of users. As numbers of PrEP
+                                                   users grow, it appears that users remain relatively concentrated in these states."), br(),
+                                                   
+                                                   p("Considering rates of PrEP usage by 100,000 individuals rather than by total numbers
+                                                   would be another effective way of understanding regional differences."), br(),
+                                                   
+                                                   sidebarPanel(
+                                                     
+                                                     sliderInput("mapyear", tags$b("Choose a year:"),
+                                                                 min = 2012,
+                                                                 max = 2017,
+                                                                 value = 2012,
+                                                                 step = 1,
+                                                                 sep = ""
+                                                                 )
+                                                     ),
+                                                   fluidRow(column(2), column(8,
+                                                   mainPanel(
+                                                     
+                                                     # Create the map
+                                                     
+                                                     plotOutput("maphiv")
+                                                     )
+                                                   )
+                                                   ),
+                                                   
+                                                   h5(tags$b("Race-wide")),
+                                                   
+                                                    p("Curious to know how PrEP usage varies accross demographics?
+                                                    Imagine you could take a sample of a size of your chosing. Enter 
+                                                    the number of individuals you would like in your sample in order to 
+                                                    see the racial breakdown of users."), br(),
+                                                   
+                                                   p("You will note that the userbase is overwhelmingly comprised of white men. In
+                                                   2016 it was estimated that 67% of the users were white men, 12% black men,
+                                                     13% hispanic or latino men, and 4% asian men."),
+                                                   
+                                                   p(tags$em("Demographic data of users was only available for the year 2016.")), br(),
                                                    
                                                    # Here I add in a button that I will use to generate a histogram showing the race of male users.
                                                    
-                                                   numericInput("n", "Sample Size", 50),
+                                                   numericInput("n", "Sample Size", 1000),
                                                    actionButton("go", "Go"),
                                                    plotOutput("x")
                                                    )
@@ -273,14 +377,14 @@ the CDC estimates that they are up to 99% effective."),
                                                    
                                                    h3(tags$b("HIV")),
                                                    
-                                                   p("With all of these diagnoses, one may wonder how much it costs society. While
-there are several frameworks once can use to consider the cost of HIV, for our
-purposes, the most relevant is that of indirect and direct costs."), br(),
-                                                   p("Direct cost
-refers to the money spent on the individual for specific illness related care.
-Indirect cost is a bit more abstract. Rather than being a simple value such as
-the cost to fill a perscription, indirect costs relate to lost productivity.
-Another way to think of indirect costs is as the cost to society."),
+                                                   p("With all of these diagnoses, one may wonder how much it the disease costs society.
+                                                   While there are several frameworks once can use to consider the cost of HIV, for our
+                                                     purposes, the most relevant is that of indirect and direct costs."), br(),
+                                                   
+                                                   p("Direct costs refers to the money spent on the individual for specific illness related care.
+                                                   Indirect cost is a bit more abstract. Rather than being a simple value such as
+                                                   the cost to fill a perscription, indirect costs relate to lost productivity.
+                                                     Another way one may think of indirect costs is as the cost to society."),
                                                    br(),
                                                    
                                                    sidebarPanel(
@@ -301,24 +405,25 @@ Another way to think of indirect costs is as the cost to society."),
                                                                                         "2017"), multiple = FALSE)
                                                      ),
                                                    mainPanel(
-                                                     # I add this in because if not there is an error that one or more values is needed for faceting.
                                                      
                                                      br(), gt_output('table'), br(), br(), br()
                                                      )
                                                    )
                                  ),
+                        
                         fluidRow(column(2), column(8,
                                                    
                                                    p("While these numbers are staggering. You'll notice that the associated costs are
-trending downwards. This is what we would expect to see as new diagnoses has
-been generally decreasing since 2008. It is important to remember, however, that
-these costs are not decreasing for everyone."),br(),
-                                                   p("As we've seen, for men who have sex with men, these diagnoses are relatively
-static. What's more, these men who are not white are facing an increasing
-financial burden over the last 10 years. Take a look at the direct costs for different racial
-                                                     demographics of men who have sex with men below."),
+                                                   trending downwards. This is what we would expect to see as the cost of care has
+                                                   remained constant year over year while the total diagnoses have been generally decreasing
+                                                   since 2008."),br(),
                                                    
-                                                   br(),
+                                                   p("It is important to remember, however, that these costs are not decreasing for everyone."),br(),
+                                                   
+                                                   p("As we've seen, for men who have sex with men, these diagnoses are relatively
+                                                   static. What's more, these men who are not white are facing an increasing
+                                                   financial burden over the last 10 years. Take a look at the direct costs for different racial
+                                                     demographics of men who have sex with men"), br(),
                                                    
                                                    sidebarPanel(
                                                      
@@ -326,23 +431,25 @@ financial burden over the last 10 years. Take a look at the direct costs for dif
                                                      
                                                      p(tags$em("Select a demographic from the list below to view the total associated costs of HIV for your selected group.")),
                                                     
-                                                     selectInput("race2Input", "Race", c("Black/African American",
+                                                     selectInput("race_costsInput", "Race", c("Black/African American",
                                                                                                        "White",
                                                                                                        "Hispanic/Latino",
                                                                                                        "Asian"), multiple = FALSE)
                                                    ),
+                                                   
                                                    mainPanel(
-                                                     # I add this in because if not there is an error that one or more values is needed for faceting.
                                                      
                                                      br(), gt_output('table2'), br(), br()
                                                    )
                                                    
                                  )
                         ),
+                        
                         fluidRow(column(2), column(8,
                                                    h3(tags$b("Other STIs")),
                                                    
-                                                   p("Interested to see how these costs compare to other STIs? In the table below, I've compiled costs of two of the most prevalant STIs in the United States: Chlamydia and Gonorrhea."),br(),
+                                                   p("Interested to see how these costs compare to other STIs? In the table below,
+                                                     I've compiled costs of two of the most prevalant STIs in the United States: Chlamydia and Gonorrhea."),br(),
                                                    
                                                    sidebarPanel(
                                                      
@@ -359,20 +466,48 @@ financial burden over the last 10 years. Take a look at the direct costs for dif
                                                    ),
                                                    
                                                    p("A couple of things should jump out here... The first being that the costs
-incurred by women are generally much higher than that of men. Rather than
-resulting from a massive increase in number of cases for women, this is largely
-the result of STI treatment being much more expensive. For HIV, the associated
-costs are the same accross sex."), br(),
+                                                   incurred by women are generally much higher than that of men. Rather than
+                                                   resulting from a massive increase in number of cases for women, this is largely
+                                                   the result of STI treatment being much more expensive than for men. 
+                                                   For HIV, the associated costs are the same for individuals regardless of sex."), br(),
+                                                   
                                                    p("Another takeaway is that the values are much lower in this table than in the
-table of HIV costs. This is to say that the costs of these other STIs do not
-come close to the costs incurred to both the individual and to society with HIV.
-With this in mind, finding a method for curbing the prevalence of HIV should be
-a top priority for those financially invested players such as policy makers and
-other officials."), br(),
+                                                   table of HIV costs. This is to say that even in the most expensive year shown,
+                                                   the costs of these other STIs do not come close to the costs incurred to both
+                                                     the individual and to society from HIV."), br()
+                                            
+                                                   )
+                                 )
+                        ),
+               
+               tabPanel("Conclusion",
+                        
+                        imageOutput("conclusion", width = "100%", height = "100%"), br(),
+                        
+                        h1(tags$b("Conclusion"), align = "center"), 
+                        hr(), 
+                        
+                        fluidRow(column(2), column(8,
+                                                   p("From the data considered in this analysis, men who have sex with men should be
+                                                     at the focal point of interventions. This group makes up the overwhelming
+                                                     majority of new cases, and has not been privy to the same gains that other
+                                                     groups have enjoyed over the last decade."), br(),
                                                    
+                                                   p("Given its' efficacy, PrEP should be an exciting opportunity to decrease diagnoses 
+                                                   amongst men who have sex with men. The evidence presented in this application shows
+                                                   that currently white men are the majority of the drug's user base as well as the only
+                                                   racial group of men who are infected from male to male sexual contact who are lowering cases
+                                                   of HIV on a yearly basis."),br(),
                                                    
-                        )
-                        )
+                                                   p("PrEP usage should not be interpreted as the only driver in the decrease in diagnoses for white men; there
+                                                   are plenty of other factors such as socieoeconomic status, access to health insurance, and
+                                                   community attitudes that play a role in driving this trend. PrEP usage can, however, be recognized
+                                                   for its' clear association with a decrease in HIV diagnoses year over year."), br(),
+                                                   
+                                                   p("With this in mind, those looking  to contain costs and to curb diagnoses should consider programs
+                                                   aimed at expanding access to PrEP for diverse racial groups.")
+                                                   )
+                                 )
                         ),
                         
                
@@ -384,8 +519,9 @@ other officials."), br(),
                                                    )
                                  )
                         )
+                        )
                )
-    )
+
 
 server <- function(input, output, session) {
     # Here is where I load the title image for my presentation. I got this image at:
@@ -464,11 +600,28 @@ server <- function(input, output, session) {
      # Create plot of HIV diagnosis by race
      
      output$race <- renderPlot({
-         filtered2<-
+         filtered_race<-
              hiv_aids_maletomalesexualcontact %>% 
              filter(race_ethnicity %in% input$raceInput)
-         
-         ggplot(filtered2, aes(x = year, y = total_cases)) +
+        ggplot(filtered_race, aes(x = year, y = total_cases)) +
+          geom_point(fill = wes_palette("Darjeeling2", n = 1)) + 
+          geom_smooth(method = "lm", fill = wes_palette("Zissou1", n = 1)) +
+          facet_wrap(~ race_ethnicity) + 
+          labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
+              theme_classic() +
+              scale_x_continuous(
+                 name = "Year",
+                 breaks = seq(2007,2017,2),
+                 label = c("2007", "2009", "2011", "2013", "2015", "2017")) +
+             scale_y_continuous(
+                 name = "New Diagnoses")
+     })
+     
+        output$race2 <- renderPlot({
+          filtered_race2<-
+            hiv_aids_maletomalesexualcontact %>% 
+            filter(race_ethnicity %in% input$race2Input)   
+         ggplot(filtered_race2, aes(x = year, y = total_cases)) +
              geom_col(fill = wes_palette("IsleofDogs1", n = 1)) +
             facet_wrap(~ race_ethnicity) +
              labs(title="HIV Diagnosis Male-to-male Sexual Contact", subtitle = "2007-2017") +
@@ -478,9 +631,9 @@ server <- function(input, output, session) {
                  breaks = seq(2007,2017,2),
                  label = c("2007", "2009", "2011", "2013", "2015", "2017")) +
              scale_y_continuous(
-                 name = "New Diagnoses"
-             )
+                 name = "New Diagnoses")
      })
+  
      
      # Loading the pages title image
      
@@ -578,7 +731,7 @@ server <- function(input, output, session) {
        
        filtered4 <-
          hiv_aids_all %>% 
-         filter(race_ethnicity == input$race2Input,
+         filter(race_ethnicity == input$race_costsInput,
                 transmission_category == "Male-to-male sexual contact")
        
        filtered4 %>% 
@@ -603,12 +756,12 @@ server <- function(input, output, session) {
          fmt_number(.,2:4, decimals = 0)
        
      })
-    
+
      output$table3 <- render_gt({
        filtered5 <-
          chlamydia_gonorrea_total %>% 
          filter(indicator == input$stiInput) 
-       
+
        filtered5 %>% 
          group_by(indicator, year, sex) %>%
        ungroup(indicator, sex, year) %>% 
@@ -627,14 +780,50 @@ server <- function(input, output, session) {
          fmt_currency(., 3:5) %>% 
          fmt_number(.,3:5, decimals = 0)
      })
+     
+     
+     output$conclusion <- renderImage({
+       # Return a list containing the filename and alt text
+       list(src = './graphics/conclusion.png',
+            height = 450,
+            width = 800, style="display: block; margin-left: auto; margin-right: auto;")
+     }, deleteFile = FALSE
+     )
+     
      # Here I load in the about page of my project. It is an HTML document.
      
      output$about <- renderUI({
        HTML(markdown::markdownToHTML(knit('aboutproject.html', quiet = TRUE)))
      })
+     
+     output$maphiv <- renderPlot({
+       
+       if(input$mapyear== " ") {
+         return()
+       }
+       
+       # filter the dataset based on year
+       
+       
+       filter6 <- prep_state %>% 
+         filter(year == input$mapyear)
+
+     plot_usmap(data = filter6, values = "total_cases", regions = "state", size = 0.05) + 
+       theme(panel.background = element_rect(color = "white", fill = "white")) +
+       scale_fill_continuous(low = "white", high = "lightcoral", name = "Total Users") +
+       labs(title = paste("Map of PrEP Usage in ", input$mapyear, sep = "")) + 
+       theme(plot.title = element_text(face = "bold.italic", hjust = 0.5, size = 20))
+     
+     },
+     
+     height = 400,
+     width = 700
+     )
 }
 
 shinyApp(ui = ui, server = server)
+
+
 
 
 
