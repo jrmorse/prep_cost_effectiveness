@@ -85,12 +85,12 @@ ui <- fluidPage(
                                                    
                                                    p("One of the most important steps forward came in 2012, when the United States
                                                    witnessed the approval of a new drug that was able to prevent
-                                                   the onset of HIV for at risk individuals. With, Pre-Exposure Prophylaxis (PrEP)
-                                                   medication, these individuals have been able to live without contracting
-                                                   HIV, and have saved billions of dollars for the U.S. healthcare system."), br(),
+                                                   the onset of HIV for at risk individuals. With Pre-Exposure Prophylaxis (PrEP)
+                                                   medication these individuals have been able to live without contracting
+                                                   HIV and have saved billions of dollars for the U.S. healthcare system."), br(),
                                                   
-                                                   p("Throughout this application, we will begin by taking a look at the state of HIV today.
-                                                   We will learn where society has been successful at combatting the disease and where
+                                                   p("In this application, we will begin by taking a look at the state of HIV today.
+                                                   We will then learn where society has been successful at combatting the disease and where
                                                    we still have much work to do."),
                                                    br(), 
                                                    
@@ -117,7 +117,7 @@ ui <- fluidPage(
                                                    
                                                    h5(tags$b("Financial Losses")),
 
-                                                   p("Additionally, the United States is spending billions of dollars on treatment for HIV each year, and
+                                                   p("Additionally, the United States is spending billions of dollars on treatment for HIV each year-- and
                                                      losing even more through loss of productivity. If we can lower the rates of HIV diagnoses, we can
                                                      realize massive savings which can be directed towards distinct social programs.")
                                                    )
@@ -143,7 +143,7 @@ ui <- fluidPage(
                                                                                        p("With this interactive graph, we can start taking a closer look at who is being
                                                                                        diagnosed with HIV. Go ahead and select one or multiple sexes along with several
                                                                                        transmission categories in order to see how rates have changed throughout the
-                                                                                         year."), br(),
+                                                                                         years."), br(),
                                                                                          
                                                                                          p("You will notice that when you have all sexes and transmission categories
                                                                                          selected, the chart mirrors what you saw on the introductory page. However, when
@@ -189,7 +189,7 @@ ui <- fluidPage(
                                                             fluidRow(column(2), column(8,
                                                                                        
                                                             p("The purpose of this graph is to show that a decrease in HIV diagnoses has not
-                                                            been universally enjoyed across the all groups in the United States. The majority
+                                                            been universally enjoyed across all groups in the United States. The majority
                                                             of the decline in anual diagnoses has been for women. Male to male sexual contact,
                                                             the transmission category responsible for the most new diagnoses, has remained 
                                                             relatively constant throughout the decade."), br(),
@@ -205,7 +205,7 @@ ui <- fluidPage(
                                                                                        
                                                                                        h5(tags$b("Total Diagnoses")), br(),
                                                                                        
-                                                                                       p("In the chart below, please select multiple racial groups to vizualize the
+                                                                                       p("Please select multiple races to vizualize the
                                                                                          new diagnoses of HIV for the four racial groups who carry the largest total
                                                                                          number of diagnoses on an annual basis."), br(),
                                                                                        
@@ -231,10 +231,7 @@ ui <- fluidPage(
                                                                                              h3(tags$b("Race as an Explanatory Variable")), br(),
                                                                                              
                                                                                              p("Here you will see a similar graphic to what is shown above. Rather than viewing merely
-                                                                                                 the total cases per year, however, we are focusing on the line of best fit. The line of
-                                                                                               best fit for White men is perhaps the most striking as it is the only line with a negative
-                                                                                               slope. While all other selected racial groups are trending up, White men are exhibiting a
-                                                                                               decrease in annual diagnoses."), br(),
+                                                                                                 the total cases per year, however, we are focusing on the line of best fit."), br(),
                                                                                              
                                                                                              sidebarPanel(
                                                                                                
@@ -287,7 +284,7 @@ ui <- fluidPage(
                                                    
                                                    p("PrEP is a method used by high-risked individuals to prevent HIV. As of October 2019,
                                                    there are two brand named medications that are used for PrEP: Truvada and
-                                                   Descovy. These medications work by preventing HIV from spreading throughout your
+                                                   Descovy. These medications work by preventing HIV from spreading throughout one's
                                                    body after exposure. The pills must be taken daily, and, when used correctly,
                                                      the CDC estimates that they are up to 99% effective."),
                                                    
@@ -343,7 +340,7 @@ ui <- fluidPage(
                                                     p("Curious to know how PrEP usage varies accross demographics?
                                                     Imagine you could take a sample of a size of your chosing. Enter 
                                                     the number of individuals you would like in your sample in order to 
-                                                    see the racial breakdown of users."), br(),
+                                                    see a racial breakdown of users."), br(),
                                                    
                                                    p("You will note that the userbase is overwhelmingly comprised of white men. In
                                                    2016 it was estimated that 67% of the users were white men, 12% black men,
@@ -377,8 +374,8 @@ ui <- fluidPage(
                                                    
                                                    h3(tags$b("HIV")),
                                                    
-                                                   p("With all of these diagnoses, one may wonder how much it the disease costs society.
-                                                   While there are several frameworks once can use to consider the cost of HIV, for our
+                                                   p("With all of these diagnoses, one may wonder how much HIV costs society.
+                                                   While there are several frameworks one can use to consider the cost of HIV, for our
                                                      purposes, the most relevant is that of indirect and direct costs."), br(),
                                                    
                                                    p("Direct costs refers to the money spent on the individual for specific illness related care.
@@ -421,8 +418,8 @@ ui <- fluidPage(
                                                    p("It is important to remember, however, that these costs are not decreasing for everyone."),br(),
                                                    
                                                    p("As we've seen, for men who have sex with men, these diagnoses are relatively
-                                                   static. What's more, these men who are not white are facing an increasing
-                                                   financial burden over the last 10 years. Take a look at the direct costs for different racial
+                                                   static. What's more, non-white men are facing an increasing
+                                                   financial burden over the last 10 years. Take a look at the costs for different racial
                                                      demographics of men who have sex with men"), br(),
                                                    
                                                    sidebarPanel(
@@ -471,7 +468,7 @@ ui <- fluidPage(
                                                    the result of STI treatment being much more expensive than for men. 
                                                    For HIV, the associated costs are the same for individuals regardless of sex."), br(),
                                                    
-                                                   p("Another takeaway is that the values are much lower in this table than in the
+                                                   p("Another takeaway is that the costs are much lower in this table than in the
                                                    table of HIV costs. This is to say that even in the most expensive year shown,
                                                    the costs of these other STIs do not come close to the costs incurred to both
                                                      the individual and to society from HIV."), br()
@@ -489,22 +486,22 @@ ui <- fluidPage(
                         
                         fluidRow(column(2), column(8,
                                                    p("From the data considered in this analysis, men who have sex with men should be
-                                                     at the focal point of interventions. This group makes up the overwhelming
-                                                     majority of new cases, and has not been privy to the same gains that other
+                                                     at the focal point of future interventions. This group makes up the overwhelming
+                                                     majority of new cases, and they not been privy to the same gains that other
                                                      groups have enjoyed over the last decade."), br(),
                                                    
                                                    p("Given its' efficacy, PrEP should be an exciting opportunity to decrease diagnoses 
                                                    amongst men who have sex with men. The evidence presented in this application shows
-                                                   that currently white men are the majority of the drug's user base as well as the only
-                                                   racial group of men who are infected from male to male sexual contact who are lowering cases
-                                                   of HIV on a yearly basis."),br(),
+                                                   that currently white men are the majority of the drug's user base. They are also the only
+                                                   racial group of those infected from male to male sexual contact who are experiencing a 
+                                                   decrease in HIV cases on a annual basis."),br(),
                                                    
                                                    p("PrEP usage should not be interpreted as the only driver in the decrease in diagnoses for white men; there
                                                    are plenty of other factors such as socieoeconomic status, access to health insurance, and
-                                                   community attitudes that play a role in driving this trend. PrEP usage can, however, be recognized
+                                                   community attitudes that all play a role in driving this trend. PrEP usage can, however, be recognized
                                                    for its' clear association with a decrease in HIV diagnoses year over year."), br(),
                                                    
-                                                   p("With this in mind, those looking  to contain costs and to curb diagnoses should consider programs
+                                                   p("With this in mind, those looking to contain healthcare costs and to curb new diagnoses of HIV should consider programs
                                                    aimed at expanding access to PrEP for diverse racial groups.")
                                                    )
                                  )
