@@ -1,7 +1,7 @@
 # Prep Cost Effectiveness
 
 In this project I analyaze public data from the CDC, academic papers, and pharmeceutical 
-organizations to better understand HIV and its' trends over the last decade. 
+organizations to better understand HIV and its' trends over the last ~15 years. 
 
 I pay close attention to the role PrEP may play in curbing diagnoses for certain groups, 
 and it's potential to save the United States billions of dollars each year.
