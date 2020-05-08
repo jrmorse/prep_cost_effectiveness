@@ -6,7 +6,7 @@ organizations to better understand HIV and its' trends over the last ~15 years.
 I pay close attention to the role PrEP may play in curbing diagnoses for certain groups, 
 and it's potential to save the United States billions of dollars each year.
 
-# Repo
+## Repo
 
 My raw data sets from the CDC along with other sources live in the folder titled "Data_Sets".
 New tables were created and the data was cleaned in the rmd file titled "datasets". All of
