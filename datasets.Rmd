@@ -1,5 +1,5 @@
 ---
-title: "datasets"
+title: "Datasets"
 author: "John Morse"
 date: "2/25/2020"
 output: html_document
@@ -30,41 +30,6 @@ library(usmap)
 library(broom)
 library(dplyr)
 ```
-
-My work so far: My data comes from a variety of sources that includes the CDC,
-academic research, and a pharmaceutical company.
-
-I have spent most of my time cleaning the data and ensuring that all of the
-disparate graphs and tables are in proper form so that I can run analysis. My
-work so far has looked like this:
-
-
-1. Gather data and store on my computer 
-
-2. Create GitHub repo which can be found here:
-https://github.com/jrmorse/final_project_datasets
-
-3. Load data into my .rmd
-
-
-4. scrape data from a website into my RMD. Here I had to spend a lot time
-ensuring that the format was correct. This meant getting rid of the costs for
-diseases that I wasn’t interested in, converting characters to integers, and
-segmenting between direct and indirect medical costs.
-
-
-5.  I made a function to run through a folder in my repo and to automatically,
-pull, clean, and combine data referring to PrEP usage in the U.S.
-
-
-6. I made a quick bar graph to show the increase of usage between men and women
-between 2012-2018.
-
-
-7. Then I read in, cleaned, and reformatted all CDC data for HIV and other
-relevant STIs.
-
-*Please see below for the tables I have created*
 
 ```{r all costs}
 # This includes the direct medical costs associated with key STIs in the U.S.. I
@@ -97,7 +62,8 @@ costs_clean <- table_costs_messy %>%
   ) %>% 
   
 # I did this line below to get rid of extra text in the parameter column.
-  mutate_all(~ gsub(x =., pattern = "\\*| \\[5]| \\[6]| \\[1,64,65]| \\[85]", "")) %>% 
+  
+mutate_all(~ gsub(x =., pattern = "\\*| \\[5]| \\[6]| \\[1,64,65]| \\[85]", "")) %>% 
 
 # I do this to convert the amount to 2020 USD
   
@@ -113,6 +79,7 @@ write_csv(costs_clean, "csv/cost_clean.csv")
 # dataset has indirect costs listed as a separate that is embedded in the data.
 # In the following r blocks I will separate out the indirectand direct costs so
 # that I can be more specific.
+
 ```
 
 
@@ -138,15 +105,16 @@ indirect_costs_sti <- costs_clean %>%
   slice(21:28) 
 
 # Here I'll join these two tables together with a bind function.
+
 indirect_costs = rbind(indirect_costs_hiv, indirect_costs_sti)
 
 # change the title of the cost column to be more specific
+
 colnames(indirect_costs)[3] <- "indirect_cost_2020"
 
 indirect_costs
 
 # INDIRECT & DIRECT COSTS
-
 # this is what I will use as a reference.
 
 complete_costs <- direct_costs %>% 
@@ -155,16 +123,19 @@ complete_costs <- direct_costs %>%
 
 complete_costs
 
-#to load
+# to load
+
 write_csv(complete_costs, "csv/complete_costs.csv")
 ```
 
 
 ```{r Prep data state}
+
 prep_data_state <- data.frame()
 
 # Listing out all the files in this particular folder. All of this data relates
 # to PrEP usage in the U.S. on a state level.
+
 list <- list.files("Data_Sets/prep_data_state")
 
 # Here I have the actual function which is picking up on every document that
@@ -193,7 +164,9 @@ prep_race <- read_html("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/tab
   clean_names() %>% 
   slice(16:20)
 
-# Changing names of the races so that they match the data set I have from the CDC. Also getting rid of unwanted characters and converting to numerics so that I can find percentage by demographic.
+# Changing names of the races so that they match the data set I have from the
+# CDC. Also getting rid of unwanted characters and converting to numerics so
+# that I can find percentage by demographic.
 
 race <- str_replace(prep_race$characteristic, "Black", "Black/ African American")
 race <- str_replace(race, "Hispanic", "Hispanic/ Latino")
@@ -204,7 +177,9 @@ drug_use_28 <- str_replace(prep_race$length_of_drug_useno_percent_2, " \\(.*\\)"
 drug_use_28 <- str_replace(drug_use_28, ",", "")
 drug_use_28 <- as.numeric(drug_use_28)
 
-# Cleaning up the data so that I can pull the demographics of prep users. I have consolidated those users who are more than 28 days and those who are more than 30 days so that I can have one generalizable percentage. 
+# Cleaning up the data so that I can pull the demographics of prep users. I have
+# consolidated those users who are more than 28 days and those who are more than
+# 30 days so that I can have one generalizable percentage.
 
 prep_race <- prep_race %>% 
   mutate(race = race,
@@ -220,7 +195,9 @@ write_csv(prep_race, "csv/prep_race.csv")
 ```
 
 ```{r PrEP growth rates for men and women_state}
+
 # data for only male users
+
 prep_m_state <- prep_data_state %>% 
   select(year, male_pr_ep_users, state_abbreviation, state) %>%
   mutate(sex = "Male")
@@ -228,13 +205,16 @@ colnames(prep_m_state)[2] <- c("pr_ep_users")
 prep_m_state
 
 # data for only female users
+
 prep_f_state <- prep_data_state %>% 
   select(year, female_pr_ep_users, state_abbreviation, state) %>% 
   mutate(sex = "Female")
 colnames(prep_f_state)[2] <- c("pr_ep_users") 
 prep_f_state
 
-# Here I'll use the bind function to list the information ontop of eachother. I did not realize this earlier, but I cannot do this if I am grouping by state. If so, the values on the y axis are all wrong.
+# Here I'll use the bind function to list the information ontop of eachother. I
+# did not realize this earlier, but I cannot do this if I am grouping by state.
+# If so, the values on the y axis are all wrong.
 
 prep_gender <- rbind(prep_f_state, prep_m_state) %>% 
   group_by(year, sex) %>% 
@@ -248,24 +228,37 @@ write_csv(prep_gender, "csv/prep_gender.csv")
 
 ```{r}
 
+# Total prep users by state and year.
+
 prep_state <- rbind(prep_f_state, prep_m_state) %>% 
   group_by(year, state) %>% 
   summarize(total_cases = sum(pr_ep_users))
 
 # to load for map
+
 write_csv(prep_state, "csv/prep_state.csv")
 
 ```
 
 ```{r prep_m_state with race}
-# It is likely that female racial use is different than males. Females, however, make up such a small portion of users, the proportion I have generated is likely quite accurate. I will not, however, apply the racial estimations to females who use prep as these values may not be representative.
+
+# It is likely that female racial use is different than males. Females, however,
+# make up such a small portion of users, the proportion I have generated is
+# likely quite accurate. I will not, however, apply the racial estimations to
+# females who use prep as these values may not be representative.
 
 prep_m_state_race <- prep_m_state %>% 
   group_by(year) %>%
   summarise(pr_ep_users = sum(pr_ep_users))
 prep_m_state_race
 
-# Here I am making a dataframe based off total male prep users. I assigned each user from 2018 with an ID number. From there, I applied the racial demographic estimates from the 2016 article that I cited. When I run a prop.table function, the percentages of users match up. I will use this frame to generate the liklihood of selecting a user who is of race x. Total values of races are included here: white = 1:84176, black = 14277, latino = 16571, asian = 5563, other = 2947.
+# Here I am making a dataframe based off total male prep users. I assigned each
+# user from 2018 with an ID number. From there, I applied the racial demographic
+# estimates from the 2016 article that I cited. When I run a prop.table
+# function, the percentages of users match up. I will use this frame to generate
+# the liklihood of selecting a user who is of race x. Total values of races are
+# included here: white = 1:84176, black = 14277, latino = 16571, asian = 5563,
+# other = 2947.
 
 prep_race_sample <- data.frame(id = 1:123534) %>% 
   mutate(race = ifelse(id %in% 1:84176, "White",
@@ -279,6 +272,7 @@ write_csv(prep_race_sample, "csv/prep_race_sample.csv")
 ``` 
 
 ```{r HIV DIAGNOSIS ONLY}
+
 # Here I read in all the CDC data for HIV/AIDS rates for females from 2008 to
 # 2017. I have added an extra column to list what the sex is.
 
@@ -298,10 +292,9 @@ hiv_aids_m <- read_xlsx("Data_Sets/CDC_Data/AtlasPlus_CDC_Male_HIV:AIDS.xlsx",
 hiv_aids_m[hiv_aids_m == "Data not available"] <-NA
 
 # Here I merged the two HIV/AIDS datasets as the variables were the same for
-# both the female and male tables. For testing purposes, I am only showing the
-# first 10 rows.
-
-# I filtered for indicator of HIV diagnoses because if I do not, it lumps prevelance and diagnoses together in a way that is misleading for the information I want to communicate.
+# both the female and male tables. I filtered for indicator of HIV diagnoses
+# because if I do not, it lumps prevelance and diagnoses together in a way that
+# is misleading for the information I want to communicate.
 
 hiv_aids_all <- rbind(hiv_aids_f, hiv_aids_m) %>% 
   filter(indicator == "HIV diagnoses")
@@ -312,8 +305,9 @@ write_csv(hiv_aids_all, "csv/hiv_aids_all.csv")
 ```
 
 
-```{r}
+```{r regression}
 
+# Here I build the table I will use for my regression.
 
 regression <- hiv_aids_all %>%
   filter(sex == "Male") %>% 
@@ -326,12 +320,10 @@ regression <- hiv_aids_all %>%
 
 write_csv(regression, "csv/regression.csv")
 
-
-
-
 ```
 
 ```{r HIV Cases by year}
+
 # A table with hiv diagnoses by year for both sexes.
 
 hiv_aids_year <- hiv_aids_all %>% 
@@ -344,6 +336,7 @@ write_csv(hiv_aids_year, "csv/hiv_aids_year.csv")
 ```
 
 ```{r HIV Diagnoses Transmission Category table}
+
 # Table of HIV rates by transmission category
 
 hiv_aids_transmission <- hiv_aids_all %>% 
@@ -354,46 +347,27 @@ hiv_aids_transmission
 
 
 ```{r Male to male sexual contact}
+
+# Table that looks at total diagnoses for msm contact.
+
 hiv_aids_maletomalesexualcontact <- hiv_aids_all %>% 
-  filter(transmission_category == "Male-to-male sexual contact" & race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
+  filter(transmission_category == "Male-to-male sexual contact" &
+           race_ethnicity %in% c("White","Black/African American", "Hispanic/Latino", "Asian")) %>%
   group_by(year, race_ethnicity) %>%
   summarize(total_cases = sum(cases))
 
-
 # to load
+
 write_csv(hiv_aids_maletomalesexualcontact,"csv/hiv_aids_maletomalesexualcontact.csv")
 ```
 
-```{r}
 
-interaction <- lm(total_cases ~ race_ethnicity * transmission_category )
-```
+```{r STI table}
 
-
-```{r}
-# SYPHILIS ONLY
-# Here I read in all the CDC data for both early latent and congential syphilis
-# rates from 2008 to 2017. I still should rename the columns so that it is clear
-# which values are for which variable when I join the datasets. Unclear if I will use this data or not. There is no racial component and cases are lower.
-
-syphilis <- read_xlsx("Data_Sets/CDC_Data/Atlas_Congenital&EarlyLatentSyphilis.xlsx",
-  skip = 7) %>% 
-  clean_names()
-
-syphilis[syphilis == "Data not available"] <-NA
-
-syphilis <-  syphilis%>% 
-filter(!is.na(cases)) %>% 
-  select(indicator, year, cases)
-```
-
-```{r}
 # CHLAMYDIA AND GONORRHEA ONLY
 # Here I read in all the CDC data for Chlamydia and Gonorrhea rates from 2000 to
 # 2017. I still should rename the columns so that it is clear which values are
-# for which variable when I join the datasets. Also, for testing pursposes, I
-# have set this to only return the first ten rows as it is a large dataset.
-
+# for which variable when I join the datasets.
 
 chlamydia_gonorrhea <- read_xlsx("Data_Sets/CDC_Data/ATLAS_CDC_Chlamydia&Gonorrhea.xlsx",
   skip = 5) %>% 
@@ -406,14 +380,15 @@ chlamydia_gonorrhea <- chlamydia_gonorrhea %>%
 cases_numeric <- as.numeric(chlamydia_gonorrhea$cases) 
 rates_numeric <- as.numeric(chlamydia_gonorrhea$rate_per_100000)
 
-# master clean version
+# Clean version
 
 chlamydia_gonorrhea_numeric <- chlamydia_gonorrhea %>% 
   mutate(cases_numeric = cases_numeric,
          rates_numeric = rates_numeric) %>% 
   select(indicator, year, race_ethnicity,sex, age_group, cases_numeric, rates_numeric)
 
-# total cases by year graph
+# total cases by year graph. The values I am using to multiply are pulled from
+# cost table that I created at the beginning of this rmd.
 
 chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>% 
   group_by(indicator, year, sex) %>% 
@@ -432,7 +407,3 @@ chlamydia_gonorrea_total <- chlamydia_gonorrhea_numeric %>%
 
 write_csv(chlamydia_gonorrea_total,"csv/chlamydia_gonorrea_total.csv")
 ```
-
-
-
-

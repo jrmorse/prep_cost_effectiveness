@@ -228,7 +228,7 @@ ui <- fluidPage(
                                                                   ),
                                                                   
                                                                   fluidRow(column(2), column(8,
-                                                                                             h3(tags$b("Race as an Explanatory Variable")), br(),
+                                                                                             h5(tags$b("Race as an Explanatory Variable")), br(),
                                                                                              
                                                                                              p("Here you will see a similar graphic to what is shown above. Rather than viewing merely
                                                                                                  the total cases per year, however, we are focusing on the line of best fit."), br(),
@@ -512,7 +512,79 @@ ui <- fluidPage(
                tabPanel("About",
                         
                         fluidRow(column(2), column(8,
-                                                   includeMarkdown("aboutproject.Rmd")
+                                                   h1(tags$b("About"), align = "left"),
+                                                   hr(),
+                                                   h5(tags$b("Personal Information")),
+                                                   
+                                                   p("Hi there,"),
+                                                   p("Thanks very much for taking the time to visit this website. I hope you learned
+                                                   something new or perhaps confirmed previously held suspicions."),
+                                                   p("This webapp is the final project for the Harvard Gov1005 course, and it was submitted
+                                                   in May of 2020. Please feel free to reach out with any comments or questions. I would be happy
+                                                     to discuss the specifics of my methodology, and I welcome the opportunity
+                                                     to incorporate recomendations. The best way to reach me is via email."),
+                                                   
+                                                   p("Email: jmorse@hsph.harvard.edu"),
+                                                   tags$a(href = "https://github.com/jrmorse/prep_cost_effectiveness", "Github Repo"),br(),
+                                                   tags$a(href = "https://github.com/jrmorse", "Github Profile"), br(),hr(),
+                                                   
+                                                   h5(tags$b("Data")),
+                                                   
+                                                   p("With this project, I have aggregrated data from diverse sources including
+                                                   the CDC, Rollins School of Public Health with Gilead Sciences, and various academic
+                                                   papers presented by the National Center for Biotechnology Information."),
+                                                   
+                                                   p("All of my statistics regarding HIV and STI rates were taken directly from the CDC.
+                                                     Cost estimations of diseases were taken from academic journals as were the racial
+                                                     estimations for PrEP users. As PrEP is relatively new, there are no official statistics
+                                                     on the actual demography of its' users. Furthermore, the only data available regarding
+                                                     demography of users is from 2016. This is a limitation of my work."), hr(),
+                                                   
+                                                   h5(tags$b("The Process")),
+                                                   
+                                                   p("The first work I did was to scrape academic journals in order to gather cost estimates
+                                                     for HIV and STIs. The information here is from a highly cited paper that estimates both
+                                                     direct and indirect costs of various illnesses. The referenced paper can be found here:
+                                                     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2426671/. This data is from 2006, so I
+                                                     adjusted the value of inflation to convey 2020 USD."),
+                                                   
+                                                   p("After handling the costs, I set about loading statistics on the rates of PrEP usage
+                                                   The data I pulled for PrEP usage was published by Gilead
+                                                   with Rollins School of Public health and can be found here: https://aidsvu.org/ as well as in
+                                                     my repo. Once I loaded and cleaned this data, I scraped another academic journal in order
+                                                     to gauge the estimated racial demographics of users. The paper I used can be accessed here:
+                                                     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6193685/."),
+                                                   
+                                                   p("Once this information was in R, I followed a similar process to load statistics to account
+                                                     for HIV and STI rates mostly beginning in 2012. These datasets came directly from a CDC platform
+                                                     called AtlasPlus. This website can be found here: https://www.cdc.gov/nchhstp/atlas/index.htm
+                                                     as well as in my repo."),
+                                                   
+                                                   p("With all this data cleaned and matched appropriately, I was able to begin the process
+                                                     of creating graphs and interactive tools on the Shiny app."), hr(),
+                                                   
+                                                   h5(tags$b("Limitations")),
+                                                   
+                                                   p("My original vision for this project was to consider the role of PrEP in driving down HIV
+                                                     diagnoses and driving up increased rates of STIs in the United States. I wanted to
+                                                     analyze if the savings from HIV averted cases was greater than the costs incurred from
+                                                     the large increase in STI diagnoses."),
+                                                   
+                                                   p("Unfortunately, the datasets were not complete enough to accurately
+                                                     link PrEP users to new STI cases. STI data published by the CDC does not account for type of
+                                                     transmission in the way that HIV data does. As this is the case, I did not feel that making such
+                                                     an estimate was appropriate. From my research, however, it appears that the costs associated
+                                                     with each HIV diagnoses far outweigh the costs of STIs that may be incurred by PrEP users.
+                                                     In other words, this medication may be cost effective."),
+                                                   
+                                                   p("It is important to mention that I have not included the price of taking PrEP.
+                                                   As of 2019, private insurance companies, and even Medicaid,
+                                                     must cover the medication for their beneficiaries.
+                                                     This is not to say that the medication is cheap for such organizations.
+                                                     For those without insurance, out-of-pocket costs are estimated to hover around $13,000 per year.
+                                                     This effectively puts PrEP far out of reach for the millions of uninsured folks in the United
+                                                     States."),br()
+                                                   
                                                    )
                                  )
                         )
@@ -525,7 +597,9 @@ server <- function(input, output, session) {
     # "https://www.jnj.com/innovation/6-surprising-things-you-may-not-know-about-hiv-aids-today"
     
     output$image <- renderImage({
+      
         # Return a list containing the filename and alt text
+      
         list(src = './graphics/title.png',
              height = 450,
              width = 800, style="display: block; margin-left: auto; margin-right: auto;")
@@ -544,7 +618,9 @@ server <- function(input, output, session) {
     )
     
     output$population <- renderImage({
+      
       # Return a list containing the filename and alt text
+      
       list(src = './graphics/population.png',
            height = 450,
            width = 800, style="display: block; margin-left: auto; margin-right: auto;")
@@ -644,7 +720,7 @@ server <- function(input, output, session) {
      }, deleteFile = FALSE
      )
      
-    # Here I am creating the plotthat shows how PrEP has been used by genders on an annual basis.
+    # Here I am creating the plot that shows how PrEP has been used by sexes on an annual basis.
      
      output$prepTotal <- renderPlot({
        ggplot(data = prep_gender, aes(x = year, y = total_cases, fill = sex)) +
@@ -780,18 +856,14 @@ server <- function(input, output, session) {
      
      
      output$conclusion <- renderImage({
+       
        # Return a list containing the filename and alt text
+       
        list(src = './graphics/conclusion.png',
             height = 450,
             width = 800, style="display: block; margin-left: auto; margin-right: auto;")
      }, deleteFile = FALSE
      )
-     
-     # Here I load in the about page of my project. It is an HTML document.
-     
-     output$about <- renderUI({
-       HTML(markdown::markdownToHTML(knit('aboutproject.html', quiet = TRUE)))
-     })
      
      output$maphiv <- renderPlot({
        
@@ -800,7 +872,6 @@ server <- function(input, output, session) {
        }
        
        # filter the dataset based on year
-       
        
        filter6 <- prep_state %>% 
          filter(year == input$mapyear)
